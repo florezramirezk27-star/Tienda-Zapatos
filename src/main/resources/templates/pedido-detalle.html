@@ -3,75 +3,131 @@
 <head th:replace="~{fragments/layout :: head('Detalle del pedido')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
-<main class="container py-4">
-  <div th:replace="~{fragments/layout :: alertas}"></div>
-  <a class="small" th:href="@{${volver}}">&larr; Volver a los pedidos</a>
 
-  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2 mb-3">
-    <h1 class="h3 mb-0">Pedido <span th:text="${pedido.numero}">PED-0</span>
-      <span th:replace="~{fragments/layout :: estado(${pedido.estado})}"></span></h1>
+<main class="orders-page">
+  <div class="container">
+    <div th:replace="~{fragments/layout :: alertas}"></div>
 
-    <div class="d-flex flex-wrap gap-2">
-      <!-- HU-12: factura PDF, solo si el pedido es facturable (RN-07) -->
-      <a class="btn btn-outline-dark btn-sm" th:if="${pedido.estado.facturable}"
-         sec:authorize="hasAnyRole('VENDEDOR','CLIENTE')" th:href="@{/facturas/{id}(id=${pedido.id})}">Descargar factura (PDF)</a>
+    <a class="enlace-volver d-inline-flex align-items-center gap-1 mb-4 focus-ring" th:href="@{${volver}}" style="font-size: var(--fs-body-sm);">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Volver a mis pedidos
+    </a>
 
-      <!-- HU-10: el vendedor confirma, entrega y cancela; el almacenista envía (RN-05) -->
-      <th:block sec:authorize="hasRole('VENDEDOR')">
-        <form th:if="${pedido.estado.name() == 'PENDIENTE'}" th:action="@{/gestion/pedidos/{id}/confirmar(id=${pedido.id})}" method="post">
-          <button class="btn btn-primary btn-sm" type="submit">Confirmar</button>
-        </form>
-        <form th:if="${pedido.estado.name() == 'ENVIADO'}" th:action="@{/gestion/pedidos/{id}/entregar(id=${pedido.id})}" method="post">
-          <button class="btn btn-success btn-sm" type="submit">Marcar como entregado</button>
-        </form>
-        <form th:if="${pedido.estado.name() == 'PENDIENTE' or pedido.estado.name() == 'CONFIRMADO'}"
-              th:action="@{/gestion/pedidos/{id}/cancelar(id=${pedido.id})}" method="post"
-              onsubmit="return confirm('¿Cancelar el pedido? El stock se devolverá.');">
-          <button class="btn btn-outline-danger btn-sm" type="submit">Cancelar pedido</button>
-        </form>
-      </th:block>
-      <th:block sec:authorize="hasRole('ALMACENISTA')">
-        <form th:if="${pedido.estado.name() == 'CONFIRMADO'}" th:action="@{/gestion/pedidos/{id}/enviar(id=${pedido.id})}" method="post">
-          <button class="btn btn-primary btn-sm" type="submit">Marcar como enviado</button>
-        </form>
-      </th:block>
-    </div>
-  </div>
+    <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-5">
+      <div>
+        <h1 class="display-title mb-1" style="font-size: var(--fs-h2); font-weight: 800;">
+          Pedido <span th:text="${pedido.numero}">PED-0001</span>
+        </h1>
+        <span th:replace="~{fragments/layout :: estado(${pedido.estado})}"></span>
+      </div>
 
-  <div class="row g-3 mb-3">
-    <div class="col-md-6">
-      <div class="card card-body shadow-sm h-100 small">
-        <div><strong>Fecha:</strong> <span th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}">fecha</span></div>
-        <div><strong>Canal:</strong> <span th:text="${pedido.canal.etiqueta}">Web</span></div>
-        <div><strong>Método de pago:</strong> <span th:text="${pedido.metodoPago.etiqueta}">Pago</span></div>
-        <div><strong>Cliente:</strong> <span th:text="${pedido.nombreCliente}">Cliente</span></div>
-        <div th:if="${pedido.direccion}"><strong>Dirección:</strong> <span th:text="${pedido.direccion}">Dirección</span></div>
+      <div class="d-flex flex-wrap gap-2">
+        <!-- Factura PDF -->
+        <a class="btn btn-outline-blue btn-sm" th:if="${pedido.estado.facturable}"
+           sec:authorize="hasAnyRole('VENDEDOR','CLIENTE')" th:href="@{/facturas/{id}(id=${pedido.id})}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          Descargar factura (PDF)
+        </a>
+
+        <!-- Acciones vendedor -->
+        <th:block sec:authorize="hasRole('VENDEDOR')">
+          <form th:if="${pedido.estado.name() == 'PENDIENTE'}"
+                th:action="@{/gestion/pedidos/{id}/confirmar(id=${pedido.id})}" method="post">
+            <button class="btn btn-blue btn-sm" type="submit">Confirmar</button>
+          </form>
+          <form th:if="${pedido.estado.name() == 'ENVIADO'}"
+                th:action="@{/gestion/pedidos/{id}/entregar(id=${pedido.id})}" method="post">
+            <button class="btn btn-success btn-sm" type="submit">Marcar como entregado</button>
+          </form>
+          <form th:if="${pedido.estado.name() == 'PENDIENTE' or pedido.estado.name() == 'CONFIRMADO'}"
+                th:action="@{/gestion/pedidos/{id}/cancelar(id=${pedido.id})}" method="post"
+                onsubmit="return confirm('¿Cancelar el pedido? El stock se devolverá.');">
+            <button class="btn btn-outline-blue btn-sm" type="submit">Cancelar pedido</button>
+          </form>
+        </th:block>
+
+        <!-- Acciones almacenista -->
+        <th:block sec:authorize="hasRole('ALMACENISTA')">
+          <form th:if="${pedido.estado.name() == 'CONFIRMADO'}"
+                th:action="@{/gestion/pedidos/{id}/enviar(id=${pedido.id})}" method="post">
+            <button class="btn btn-blue btn-sm" type="submit">Marcar como enviado</button>
+          </form>
+        </th:block>
+      </div>
+    </header>
+
+    <div class="row g-4 mb-5">
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100" style="border: none; box-shadow: var(--shadow-md); border-radius: var(--radius-xl);">
+          <div class="card-body">
+            <h3 class="h6 text-muted text-uppercase letter-spacing mb-3" style="font-size: var(--fs-caption);">Información del pedido</h3>
+            <dl class="row mb-0" style="font-size: var(--fs-body-sm);">
+              <dt class="col-sm-4 text-muted">Fecha</dt>
+              <dd class="col-sm-8 fw-semibold" th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}">fecha</dd>
+
+              <dt class="col-sm-4 text-muted">Canal</dt>
+              <dd class="col-sm-8" th:text="${pedido.canal.etiqueta}">Web</dd>
+
+              <dt class="col-sm-4 text-muted">Método de pago</dt>
+              <dd class="col-sm-8" th:text="${pedido.metodoPago.etiqueta}">Pago</dd>
+
+              <dt class="col-sm-4 text-muted">Cliente</dt>
+              <dd class="col-sm-8" th:text="${pedido.nombreCliente}">Cliente</dd>
+
+              <dt class="col-sm-4 text-muted" th:if="${pedido.direccion}">Dirección</dt>
+              <dd class="col-sm-8" th:if="${pedido.direccion}" th:text="${pedido.direccion}">Dirección</dd>
+            </dl>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="table-responsive">
-    <table class="table bg-white shadow-sm align-middle">
-      <thead class="table-light">
-        <tr><th>Zapato</th><th class="text-center">Talla</th><th class="text-center">Cantidad</th><th class="text-end">Precio</th><th class="text-end">Subtotal</th></tr>
-      </thead>
-      <tbody>
-        <tr th:each="d : ${pedido.detalles}">
-          <td th:text="${d.nombreZapato}">Zapato</td>
-          <td class="text-center" th:text="${d.talla}">40</td>
-          <td class="text-center" th:text="${d.cantidad}">1</td>
-          <td class="text-end" th:text="${@dinero.formato(d.precioUnitario)}">$0</td>
-          <td class="text-end" th:text="${@dinero.formato(d.subtotal)}">$0</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr><td colspan="4" class="text-end">Subtotal</td><td class="text-end" th:text="${@dinero.formato(pedido.subtotal)}">$0</td></tr>
-        <tr><td colspan="4" class="text-end">IVA (19 %)</td><td class="text-end" th:text="${@dinero.formato(pedido.iva)}">$0</td></tr>
-        <tr class="fw-bold"><td colspan="4" class="text-end">Total</td><td class="text-end" th:text="${@dinero.formato(pedido.total)}">$0</td></tr>
-      </tfoot>
-    </table>
+    <!-- DETALLE DE PRODUCTOS -->
+    <div class="orders-table">
+      <table class="table mb-0" role="grid" aria-label="Detalle de productos del pedido">
+        <thead>
+          <tr>
+            <th scope="col">Producto</th>
+            <th scope="col" class="text-center">Talla</th>
+            <th scope="col" class="text-center">Cantidad</th>
+            <th scope="col" class="text-end">Precio unit.</th>
+            <th scope="col" class="text-end">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="d : ${pedido.detalles}">
+            <td th:text="${d.nombreZapato}">Zapato</td>
+            <td class="text-center">
+              <span class="fw-semibold" style="font-family: var(--font-display); font-size: var(--fs-body-lg);" th:text="${d.talla}">40</span>
+            </td>
+            <td class="text-center" th:text="${d.cantidad}">1</td>
+            <td class="text-end" th:text="${@dinero.formato(d.precioUnitario)}">$0</td>
+            <td class="text-end fw-semibold" th:text="${@dinero.formato(d.subtotal)}">$0</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-end fw-semibold">Subtotal</td>
+            <td class="text-end" th:text="${@dinero.formato(pedido.subtotal)}">$0</td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-end fw-semibold">IVA (19%)</td>
+            <td class="text-end" th:text="${@dinero.formato(pedido.iva)}">$0</td>
+          </tr>
+          <tr class="fw-bold" style="font-size: var(--fs-body-lg);">
+            <td colspan="4" class="text-end">Total</td>
+            <td class="text-end text-orange" th:text="${@dinero.formato(pedido.total)}">$0</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
 </main>
+
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

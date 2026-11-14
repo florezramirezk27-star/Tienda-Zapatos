@@ -3,32 +3,60 @@
 <head th:replace="~{fragments/layout :: head('Mis pedidos')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
-<main class="container py-4">
-  <div th:replace="~{fragments/layout :: alertas}"></div>
-  <h1 class="h3 mb-3">Mis pedidos</h1>
 
-  <div class="alert alert-info" th:if="${#lists.isEmpty(pedidos)}">
-    Aún no tienes pedidos. <a th:href="@{/catalogo}">Ver el catálogo</a>
-  </div>
+<main class="orders-page">
+  <div class="container">
+    <div th:replace="~{fragments/layout :: alertas}"></div>
 
-  <div class="table-responsive" th:unless="${#lists.isEmpty(pedidos)}">
-    <table class="table bg-white shadow-sm align-middle">
-      <thead class="table-light">
-        <tr><th>Número</th><th>Fecha</th><th>Estado</th><th class="text-center">Unidades</th><th class="text-end">Total</th><th></th></tr>
-      </thead>
-      <tbody>
-        <tr th:each="p : ${pedidos}">
-          <td th:text="${p.numero}">PED-0</td>
-          <td th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
-          <td><span th:replace="~{fragments/layout :: estado(${p.estado})}"></span></td>
-          <td class="text-center" th:text="${p.unidades}">1</td>
-          <td class="text-end" th:text="${@dinero.formato(p.total)}">$0</td>
-          <td class="text-end"><a class="btn btn-outline-dark btn-sm" th:href="@{/mis-pedidos/{id}(id=${p.id})}">Ver detalle</a></td>
-        </tr>
-      </tbody>
-    </table>
+    <header class="mb-5">
+      <h1 class="display-title" style="font-size: var(--fs-h1); font-weight: 800;">Mis pedidos</h1>
+      <p class="text-muted" style="font-size: var(--fs-body-lg);">Historial y estado de tus compras</p>
+    </header>
+
+    <!-- SIN PEDIDOS -->
+    <div class="orders-empty" th:if="${#lists.isEmpty(pedidos)}" role="status">
+      <div class="cart-empty-icon" aria-hidden="true">📦</div>
+      <h2 class="cart-empty-title">Aún no tienes pedidos</h2>
+      <p class="cart-empty-text">Cuando realices tu primera compra, aparecerá aquí con su estado y detalles.</p>
+      <a class="btn btn-brand btn-lg" th:href="@{/catalogo}">Explorar catálogo</a>
+    </div>
+
+    <!-- LISTA DE PEDIDOS -->
+    <div class="orders-table" th:unless="${#lists.isEmpty(pedidos)}">
+      <table class="table mb-0" role="grid" aria-label="Lista de pedidos">
+        <thead>
+          <tr>
+            <th scope="col">Pedido</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Estado</th>
+            <th scope="col" class="text-center">Items</th>
+            <th scope="col" class="text-end">Total</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="p : ${pedidos}">
+            <td>
+              <span class="order-number" th:text="${p.numero}">PED-0001</span>
+            </td>
+            <td class="order-date" th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
+            <td>
+              <span th:replace="~{fragments/layout :: estado(${p.estado})}"></span>
+            </td>
+            <td class="text-center">
+              <span class="fw-semibold" style="font-family: var(--font-display);" th:text="${p.unidades}">1</span>
+            </td>
+            <td class="text-end order-total" th:text="${@dinero.formato(p.total)}">$0</td>
+            <td class="text-end">
+              <a class="btn btn-outline-blue btn-sm" th:href="@{/mis-pedidos/{id}(id=${p.id})}">Ver detalle</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </main>
+
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>
