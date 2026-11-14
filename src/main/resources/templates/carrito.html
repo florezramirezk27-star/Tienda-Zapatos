@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Carrito')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+  <div th:replace="~{fragments/layout :: alertas}"></div>
+  <h1 class="h3 mb-3">Mi carrito</h1>
+
+  <div class="alert alert-info" th:if="${carrito.vacio}">
+    Tu carrito está vacío. <a th:href="@{/catalogo}">Ver el catálogo</a>
+  </div>
+
+  <div th:unless="${carrito.vacio}">
+    <div class="table-responsive">
+      <table class="table bg-white shadow-sm align-middle">
+        <thead class="table-light">
+          <tr><th>Zapato</th><th class="text-center">Talla</th><th>Cantidad</th><th class="text-end">Precio</th><th class="text-end">Subtotal</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="i : ${carrito.items}">
+            <td><a th:href="@{/zapatos/{id}(id=${i.zapatoId})}" th:text="${i.nombre}">Zapato</a></td>
+            <td class="text-center" th:text="${i.talla}">40</td>
+            <td>
+              <!-- REQ-ZAP-022: cambiar la cantidad recalcula el total -->
+              <form class="d-flex gap-2" th:action="@{/carrito/actualizar}" method="post">
+                <input type="hidden" name="tallaId" th:value="${i.tallaId}">
+                <input class="form-control form-control-sm" style="width: 5rem" type="number" name="cantidad"
+                       min="0" th:value="${i.cantidad}" aria-label="Cantidad">
+                <button class="btn btn-outline-secondary btn-sm" type="submit">Actualizar</button>
+              </form>
+            </td>
+            <td class="text-end" th:text="${@dinero.formato(i.precio)}">$0</td>
+            <td class="text-end" th:text="${@dinero.formato(i.subtotal)}">$0</td>
+            <td class="text-end">
+              <form th:action="@{/carrito/eliminar}" method="post">
+                <input type="hidden" name="tallaId" th:value="${i.tallaId}">
+                <button class="btn btn-outline-danger btn-sm" type="submit">Quitar</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row justify-content-end">
+      <div class="col-md-5 col-lg-4">
+        <ul class="list-group shadow-sm mb-3">
+          <li class="list-group-item d-flex justify-content-between"><span>Subtotal</span><span th:text="${@dinero.formato(carrito.subtotal)}">$0</span></li>
+          <li class="list-group-item d-flex justify-content-between"><span>IVA (19 %)</span><span th:text="${@dinero.formato(carrito.iva)}">$0</span></li>
+          <li class="list-group-item d-flex justify-content-between fw-bold"><span>Total</span><span th:text="${@dinero.formato(carrito.total)}">$0</span></li>
+        </ul>
+        <a class="btn btn-dark w-100" th:href="@{/pedidos/confirmar}">Continuar con el pedido</a>
+      </div>
+    </div>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

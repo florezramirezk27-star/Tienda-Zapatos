@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Pedidos')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+  <div th:replace="~{fragments/layout :: alertas}"></div>
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Pedidos</h1>
+    <div class="d-flex gap-2">
+      <form class="d-flex gap-2" method="get" th:action="@{/gestion/pedidos}">
+        <select class="form-select" name="estado" aria-label="Filtrar por estado" onchange="this.form.submit()">
+          <option value="">Todos los estados</option>
+          <option th:each="e : ${estados}" th:value="${e}" th:text="${e}" th:selected="${e == estadoFiltro}"></option>
+        </select>
+      </form>
+      <a class="btn btn-dark text-nowrap" sec:authorize="hasRole('VENDEDOR')" th:href="@{/ventas/nueva}">Nueva venta</a>
+    </div>
+  </div>
+
+  <div class="alert alert-info" th:if="${#lists.isEmpty(pedidos)}">No hay pedidos con ese estado.</div>
+
+  <div class="table-responsive" th:unless="${#lists.isEmpty(pedidos)}">
+    <table class="table bg-white shadow-sm align-middle">
+      <thead class="table-light">
+        <tr><th>Número</th><th>Fecha</th><th>Cliente</th><th>Canal</th><th>Estado</th><th class="text-end">Total</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="p : ${pedidos}">
+          <td th:text="${p.numero}">PED-0</td>
+          <td th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
+          <td th:text="${p.nombreCliente}">Cliente</td>
+          <td th:text="${p.canal.etiqueta}">Web</td>
+          <td><span th:replace="~{fragments/layout :: estado(${p.estado})}"></span></td>
+          <td class="text-end" th:text="${@dinero.formato(p.total)}">$0</td>
+          <td class="text-end"><a class="btn btn-outline-dark btn-sm" th:href="@{/gestion/pedidos/{id}(id=${p.id})}">Ver</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

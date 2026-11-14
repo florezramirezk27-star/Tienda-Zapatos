@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('No encontrado')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-5 text-center">
+  <h1 class="display-5">404</h1>
+  <p class="lead">No encontramos lo que buscas.</p>
+  <a class="btn btn-dark" th:href="@{/catalogo}">Ir al catálogo</a>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

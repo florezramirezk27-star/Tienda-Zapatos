@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Usuarios')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+  <div th:replace="~{fragments/layout :: alertas}"></div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Usuarios y roles</h1>
+    <a class="btn btn-dark" th:href="@{/admin/usuarios/nuevo}">Nuevo usuario</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table bg-white shadow-sm align-middle">
+      <thead class="table-light">
+        <tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Rol</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="u : ${usuarios}">
+          <td th:text="${u.nombre}">Nombre</td>
+          <td th:text="${u.correo}">correo</td>
+          <td th:text="${u.telefono}">tel</td>
+          <td><span class="badge text-bg-primary" th:text="${u.rol.etiqueta}">Rol</span></td>
+          <td>
+            <span class="badge text-bg-success" th:if="${u.activo}">Activo</span>
+            <span class="badge text-bg-secondary" th:unless="${u.activo}">Inactivo</span>
+          </td>
+          <td class="text-end">
+            <!-- REQ-ZAP-008: se desactiva sin borrar el historial -->
+            <form th:if="${u.activo}" th:action="@{/admin/usuarios/{id}/desactivar(id=${u.id})}" method="post"
+                  onsubmit="return confirm('¿Desactivar esta cuenta?');">
+              <button class="btn btn-outline-danger btn-sm" type="submit">Desactivar</button>
+            </form>
+            <form th:unless="${u.activo}" th:action="@{/admin/usuarios/{id}/activar(id=${u.id})}" method="post">
+              <button class="btn btn-outline-success btn-sm" type="submit">Activar</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

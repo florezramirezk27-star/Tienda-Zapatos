@@ -1,0 +1,137 @@
+/* ===== Tienda de Zapatos · identidad visual =====
+   Naranja vibrante + azul eléctrico + amarillo, sobre blanco y crema. Solo presentación. */
+:root {
+  --naranja: #ff6a13;
+  --naranja-osc: #e85a05;
+  --azul: #1f5bff;
+  --azul-osc: #1646cc;
+  --amarillo: #ffc928;
+  --crema: #fff7ea;
+  --crema-2: #ffefd5;
+  --celeste: #eaf1ff;
+  --texto: #1d2640;
+  --suave: #5d6785;
+  --radio: 18px;
+  --sombra: 0 8px 24px rgba(31, 91, 255, .10);
+  --bs-primary: #1f5bff;
+  --bs-primary-rgb: 31, 91, 255;
+  --bs-link-color: #1f5bff;
+  --bs-link-hover-color: #1646cc;
+  --bs-body-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bs-body-color: #1d2640;
+}
+
+html { font-size: 112.5%; }          /* 18 px base: todo el texto crece */
+body {
+  font-family: var(--bs-body-font-family);
+  font-size: 1rem; line-height: 1.6; color: var(--texto);
+  background: #fffdf9; min-height: 100vh; display: flex; flex-direction: column;
+}
+main { flex: 1; }
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .navbar-brand, .btn {
+  font-family: 'Poppins', 'Inter', sans-serif;
+}
+h1, h2, h3 { font-weight: 700; color: var(--texto); }
+small, .small { font-size: .95em; }
+.text-muted { color: var(--suave) !important; }
+a { font-weight: 500; }
+
+/* ----- Botones ----- */
+.btn { font-size: 1rem; font-weight: 600; padding: .6rem 1.25rem; border-radius: 999px; }
+.btn-lg { font-size: 1.1rem; padding: .85rem 1.9rem; }
+.btn-primary, .btn-azul { background: var(--azul); border-color: var(--azul); color: #fff; }
+.btn-primary:hover, .btn-azul:hover { background: var(--azul-osc); border-color: var(--azul-osc); color: #fff; }
+.btn-naranja, .btn-dark { background: var(--naranja); border-color: var(--naranja); color: #fff; }
+.btn-naranja:hover, .btn-dark:hover, .btn-naranja:focus, .btn-dark:focus { background: var(--naranja-osc); border-color: var(--naranja-osc); color: #fff; }
+.btn-outline-primary, .btn-outline-azul { color: var(--azul); border: 2px solid var(--azul); background: transparent; }
+.btn-outline-primary:hover, .btn-outline-azul:hover { background: var(--azul); color: #fff; border-color: var(--azul); }
+.btn-outline-secondary, .btn-outline-dark, .btn-outline-light { color: var(--azul); border: 2px solid var(--azul); background: transparent; }
+.btn-outline-secondary:hover, .btn-outline-dark:hover, .btn-outline-light:hover { background: var(--azul); color: #fff; border-color: var(--azul); }
+.btn-sm { font-size: .95rem; padding: .4rem .95rem; }
+.btn-warning { background: var(--amarillo); border-color: var(--amarillo); color: var(--texto); }
+
+/* ----- Barra de navegación ----- */
+.barra { background: #fff; box-shadow: 0 2px 14px rgba(29, 38, 64, .08); border-bottom: 4px solid var(--amarillo); padding: .6rem 0; }
+.barra .nav-link { color: var(--texto); font-weight: 600; font-size: 1.05rem; padding: .5rem .9rem; border-radius: 999px; }
+.barra .nav-link:hover { color: var(--azul); background: var(--celeste); }
+.marca { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--azul); }
+.marca-acento { color: var(--naranja); }
+.marca-icono { font-size: 1.5rem; }
+
+/* ----- Portada ----- */
+.hero { background: linear-gradient(135deg, var(--crema) 0%, var(--crema-2) 55%, #ffe3b0 100%); padding: 3.5rem 0 4rem; overflow: hidden; }
+.hero-etiqueta { display: inline-block; background: var(--amarillo); color: var(--texto); font-weight: 700; padding: .35rem 1rem; border-radius: 999px; margin-bottom: 1rem; }
+.hero-titulo { font-size: clamp(2.2rem, 5vw, 3.1rem); font-weight: 800; line-height: 1.12; margin-bottom: 1rem; }
+.hero-titulo span { color: var(--naranja); }
+.hero-texto { font-size: 1.15rem; color: var(--suave); max-width: 34rem; margin-bottom: 1.75rem; }
+.hero-foto { border-radius: 32px; overflow: hidden; box-shadow: 0 18px 40px rgba(255, 106, 19, .25); border: 6px solid #fff; transform: rotate(1.5deg); }
+.hero-foto img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+
+.seccion { padding: 3.5rem 0; }
+.seccion-crema { background: var(--crema); }
+.seccion-azul { background: var(--celeste); }
+.seccion-titulo { font-size: clamp(1.7rem, 3.5vw, 2.1rem); font-weight: 700; margin-bottom: 1.75rem; }
+.seccion-sub { font-size: 1.35rem; font-weight: 700; }
+.titulo-pagina { font-size: clamp(1.9rem, 4vw, 2.4rem); font-weight: 800; margin-bottom: 1.25rem; }
+.enlace-volver { font-size: 1.05rem; font-weight: 600; text-decoration: none; }
+
+/* ----- Categorías ----- */
+.categoria-tarjeta { display: flex; flex-direction: column; align-items: center; gap: .35rem; text-decoration: none; background: #fff; border: 3px solid transparent; border-radius: var(--radio); padding: 1.5rem 1rem; box-shadow: var(--sombra); transition: transform .15s ease, border-color .15s ease; height: 100%; }
+.categoria-tarjeta:hover { transform: translateY(-4px); border-color: var(--naranja); }
+.categoria-icono { font-size: 2.6rem; background: var(--crema-2); border-radius: 50%; width: 4.5rem; height: 4.5rem; display: grid; place-items: center; }
+.categoria-nombre { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--texto); }
+.categoria-ver { color: var(--naranja); font-weight: 600; }
+
+/* ----- Tarjetas de producto ----- */
+.zapato-card { border: 0; border-radius: var(--radio); overflow: hidden; background: #fff; box-shadow: var(--sombra); transition: transform .15s ease, box-shadow .15s ease; }
+.zapato-card:hover { transform: translateY(-5px); box-shadow: 0 14px 30px rgba(255, 106, 19, .22); }
+.zapato-card .card-body { padding: 1.1rem 1.25rem 1.3rem; border-top: 4px solid var(--amarillo); }
+.zapato-img { aspect-ratio: 1 / 1; object-fit: cover; background: var(--crema-2); width: 100%; }
+.zapato-meta { color: var(--azul); font-weight: 600; font-size: .95rem; text-transform: uppercase; letter-spacing: .03em; }
+.zapato-nombre { font-size: 1.2rem; font-weight: 700; margin: .2rem 0 .4rem; }
+.precio { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.3rem; color: var(--naranja); }
+.precio-grande { font-size: 1.8rem; }
+.etiqueta-agotado { background: #e5e8f0 !important; color: var(--suave) !important; font-size: .9rem; padding: .4rem .7rem; }
+.detalle-foto { border-radius: 24px; box-shadow: var(--sombra); aspect-ratio: 1 / 1; }
+
+/* ----- Beneficios y marcas ----- */
+.beneficio { background: #fff; border-radius: var(--radio); padding: 1.6rem; height: 100%; box-shadow: var(--sombra); }
+.beneficio span { font-size: 2.2rem; }
+.beneficio h3 { font-size: 1.2rem; margin: .5rem 0 .35rem; }
+.beneficio p { color: var(--suave); margin: 0; }
+.marca-chip { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1.1rem; text-decoration: none; color: var(--azul); background: #fff; border: 2px solid var(--azul); border-radius: 999px; padding: .5rem 1.4rem; }
+.marca-chip:hover { background: var(--azul); color: #fff; }
+
+/* ----- Filtros, formularios y tablas ----- */
+.filtros, .card { border-radius: var(--radio); }
+.filtros { border: 0; box-shadow: var(--sombra); background: #fff; }
+.form-label { font-weight: 600; }
+.form-control, .form-select { font-size: 1rem; padding: .6rem .85rem; border-radius: 12px; border: 2px solid #dde3f3; }
+.form-control:focus, .form-select:focus { border-color: var(--azul); box-shadow: 0 0 0 .2rem rgba(31, 91, 255, .15); }
+.table { font-size: 1rem; }
+.table > :not(caption) > * > * { vertical-align: middle; padding: .75rem .6rem; }
+.table thead th { font-family: 'Poppins', sans-serif; color: var(--texto); background: var(--celeste); }
+.tabla-stock td, .tabla-stock th { text-align: center; padding: .45rem .5rem; font-size: .95rem; }
+.stock-cero { color: #c62828; font-weight: 700; }
+.pagination .page-link { font-size: 1rem; color: var(--azul); border-radius: 10px; margin: 0 .15rem; border: 2px solid #dde3f3; font-weight: 600; }
+.pagination .active .page-link { background: var(--naranja); border-color: var(--naranja); color: #fff; }
+.alert { font-size: 1.05rem; border-radius: 14px; }
+.badge { font-size: .9rem; font-weight: 600; }
+.auth-card { max-width: 480px; margin: 2rem auto; }
+
+/* ----- Pie de página (solo en la portada) ----- */
+.pie { background: var(--celeste); color: var(--texto); border-top: 5px solid var(--naranja); margin-top: 0; }
+.pie a { color: var(--azul); text-decoration: none; font-weight: 600; }
+.pie a:hover { text-decoration: underline; }
+.pie-marca { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--azul); }
+.pie-titulo { font-size: 1.15rem; font-weight: 700; margin-bottom: .6rem; }
+.pie li { margin-bottom: .3rem; }
+.pie hr { border-color: rgba(31, 91, 255, .25); }
+
+@media (max-width: 575.98px) {
+  html { font-size: 106.25%; }
+  .hero { padding: 2rem 0 2.5rem; }
+  .hero-foto { transform: none; }
+  .seccion { padding: 2.5rem 0; }
+  .btn-lg { width: 100%; }
+}

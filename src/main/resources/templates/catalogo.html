@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Catálogo')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="pagina">
+  <div class="container pt-3"><div th:replace="~{fragments/layout :: alertas}"></div></div>
+
+  <!-- ===== PÁGINA PRINCIPAL: portada, categorías y beneficios (solo en "/") ===== -->
+  <th:block th:if="${inicio}">
+    <section class="hero">
+      <div class="container">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-6">
+            <span class="hero-etiqueta">Nueva colección</span>
+            <h1 class="hero-titulo">Camina con <span>color</span>, estilo y comodidad</h1>
+            <p class="hero-texto">Zapatillas deportivas, casuales, formales, sandalias y botas de las mejores marcas. Elige tu talla del 34 al 45 y compra en línea.</p>
+            <div class="d-flex flex-wrap gap-3">
+              <a class="btn btn-naranja btn-lg" th:href="@{/catalogo}">Explorar productos</a>
+              <a class="btn btn-azul btn-lg" href="#destacados">Ver destacados</a>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="hero-foto">
+              <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&amp;fit=crop&amp;w=1200&amp;q=80"
+                   alt="Zapatillas deportivas para correr" fetchpriority="high">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion seccion-crema" th:if="${not #lists.isEmpty(categorias)}">
+      <div class="container">
+        <h2 class="seccion-titulo">Compra por categoría</h2>
+        <div class="row g-4">
+          <div class="col-6 col-md-4 col-xl" th:each="c : ${categorias}">
+            <a class="categoria-tarjeta" th:href="@{/catalogo(categoria=${c})}">
+              <span class="categoria-icono" aria-hidden="true">👟</span>
+              <span class="categoria-nombre" th:text="${c}">Categoría</span>
+              <span class="categoria-ver">Ver todo &rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion" id="destacados">
+      <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+          <h2 class="seccion-titulo mb-0">Productos destacados</h2>
+          <a class="btn btn-outline-azul" th:href="@{/catalogo}">Ver todo el catálogo</a>
+        </div>
+        <div class="alert alert-info" th:if="${pagina.empty}">Todavía no hay zapatos en el catálogo.</div>
+        <div class="row g-4">
+          <th:block th:each="z, fila : ${pagina.content}">
+            <div class="col-12 col-sm-6 col-lg-3" th:if="${fila.index < 8}">
+              <a class="text-decoration-none text-reset" th:href="@{/zapatos/{id}(id=${z.id})}">
+                <div class="card h-100 zapato-card">
+                  <img th:replace="~{fragments/layout :: foto(${z}, 'card-img-top zapato-img')}">
+                  <div class="card-body">
+                    <div class="zapato-meta" th:text="${z.marca} + ' · ' + ${z.categoria}">Marca · Categoría</div>
+                    <h3 class="zapato-nombre" th:text="${z.nombre}">Nombre</h3>
+                    <div class="precio" th:text="${@dinero.formato(z.precio)}">$0</div>
+                    <span class="badge etiqueta-agotado mt-1" th:if="${z.stockTotal == 0}">Agotado</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </th:block>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion seccion-azul">
+      <div class="container">
+        <h2 class="seccion-titulo">¿Por qué comprar con nosotros?</h2>
+        <div class="row g-4">
+          <div class="col-12 col-md-6 col-lg-3"><div class="beneficio"><span>📏</span><h3>Tu talla</h3><p>Tallas del 34 al 45, con la disponibilidad de cada una a la vista.</p></div></div>
+          <div class="col-12 col-md-6 col-lg-3"><div class="beneficio"><span>💳</span><h3>Pagos a tu manera</h3><p>Efectivo, tarjeta, transferencia o pago contra entrega.</p></div></div>
+          <div class="col-12 col-md-6 col-lg-3"><div class="beneficio"><span>🧾</span><h3>Factura en PDF</h3><p>Descarga la factura de tus pedidos confirmados cuando quieras.</p></div></div>
+          <div class="col-12 col-md-6 col-lg-3"><div class="beneficio"><span>📦</span><h3>Sigue tu pedido</h3><p>Consulta el estado de tus compras desde tu cuenta.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion seccion-crema" th:if="${not #lists.isEmpty(marcas)}">
+      <div class="container text-center">
+        <h2 class="seccion-titulo">Marcas</h2>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a class="marca-chip" th:each="m : ${marcas}" th:href="@{/catalogo(marca=${m})}" th:text="${m}">Marca</a>
+        </div>
+      </div>
+    </section>
+  </th:block>
+
+  <!-- ===== CATÁLOGO COMPLETO (solo en "/catalogo") ===== -->
+  <div class="container py-4" th:unless="${inicio}">
+  <h1 class="titulo-pagina">Catálogo de zapatos</h1>
+
+  <!-- REQ-ZAP-015: los filtros se combinan; solo salen zapatos que cumplan todos -->
+  <form class="card card-body mb-4 filtros" method="get" th:action="@{/catalogo}">
+    <div class="row g-2 align-items-end">
+      <div class="col-6 col-md-2">
+        <label class="form-label mb-1" for="marca">Marca</label>
+        <select class="form-select" id="marca" name="marca">
+          <option value="">Todas</option>
+          <option th:each="m : ${marcas}" th:value="${m}" th:text="${m}" th:selected="${m == marca}"></option>
+        </select>
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label mb-1" for="categoria">Categoría</label>
+        <select class="form-select" id="categoria" name="categoria">
+          <option value="">Todas</option>
+          <option th:each="c : ${categorias}" th:value="${c}" th:text="${c}" th:selected="${c == categoria}"></option>
+        </select>
+      </div>
+      <div class="col-4 col-md-2">
+        <label class="form-label mb-1" for="talla">Talla</label>
+        <select class="form-select" id="talla" name="talla">
+          <option value="">Todas</option>
+          <option th:each="t : ${#numbers.sequence(34, 45)}" th:value="${t}" th:text="${t}"
+                  th:selected="${talla != null and t == talla}"></option>
+        </select>
+      </div>
+      <div class="col-4 col-md-2">
+        <label class="form-label mb-1" for="precioMin">Precio mín.</label>
+        <input class="form-control" type="number" min="0" step="1000" id="precioMin" name="precioMin" th:value="${precioMin}">
+      </div>
+      <div class="col-4 col-md-2">
+        <label class="form-label mb-1" for="precioMax">Precio máx.</label>
+        <input class="form-control" type="number" min="0" step="1000" id="precioMax" name="precioMax" th:value="${precioMax}">
+      </div>
+      <div class="col-12 col-md-2 d-flex gap-2">
+        <button class="btn btn-naranja flex-fill" type="submit">Filtrar</button>
+        <a class="btn btn-outline-azul" th:href="@{/catalogo}">Limpiar</a>
+      </div>
+    </div>
+  </form>
+
+  <!-- REQ-ZAP-016 -->
+  <div class="alert alert-info" th:if="${pagina.empty}">No encontramos zapatos con esos filtros</div>
+
+  <div class="row g-3">
+    <div class="col-6 col-md-4 col-lg-3" th:each="z : ${pagina.content}">
+      <a class="text-decoration-none text-reset" th:href="@{/zapatos/{id}(id=${z.id})}">
+        <div class="card h-100 zapato-card shadow-sm">
+          <img th:replace="~{fragments/layout :: foto(${z}, 'card-img-top zapato-img')}">
+          <div class="card-body">
+            <div class="zapato-meta" th:text="${z.marca} + ' · ' + ${z.categoria}">Marca · Categoría</div>
+            <h2 class="zapato-nombre" th:text="${z.nombre}">Nombre</h2>
+            <div class="precio" th:text="${@dinero.formato(z.precio)}">$0</div>
+            <span class="badge etiqueta-agotado mt-1" th:if="${z.stockTotal == 0}">Agotado</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- REQ-ZAP-014: páginas de 12 en 12; los filtros se conservan al cambiar de página -->
+  <nav class="mt-4" th:if="${pagina.totalPages > 1}" aria-label="Páginas del catálogo">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" th:classappend="${pagina.first} ? 'disabled'">
+        <a class="page-link" th:href="@{/catalogo(marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax},pagina=${pagina.number - 1})}">Anterior</a>
+      </li>
+      <li class="page-item" th:each="n : ${#numbers.sequence(0, pagina.totalPages - 1)}"
+          th:classappend="${n == pagina.number} ? 'active'">
+        <a class="page-link" th:text="${n + 1}"
+           th:href="@{/catalogo(marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax},pagina=${n})}">1</a>
+      </li>
+      <li class="page-item" th:classappend="${pagina.last} ? 'disabled'">
+        <a class="page-link" th:href="@{/catalogo(marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax},pagina=${pagina.number + 1})}">Siguiente</a>
+      </li>
+    </ul>
+  </nav>
+  </div>
+</main>
+<th:block th:if="${inicio}"><footer th:replace="~{fragments/layout :: pie}"></footer></th:block>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

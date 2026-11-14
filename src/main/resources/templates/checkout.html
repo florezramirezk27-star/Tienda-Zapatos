@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Confirmar pedido')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+  <div th:replace="~{fragments/layout :: alertas}"></div>
+  <h1 class="h3 mb-3">Confirmar pedido</h1>
+
+  <div class="alert alert-info" th:if="${carrito.vacio}">
+    Tu carrito está vacío. <a th:href="@{/catalogo}">Ver el catálogo</a>
+  </div>
+
+  <div class="row g-4" th:unless="${carrito.vacio}">
+    <div class="col-md-7">
+      <ul class="list-group shadow-sm">
+        <li class="list-group-item d-flex justify-content-between" th:each="i : ${carrito.items}">
+          <span><span th:text="${i.cantidad}">1</span> × <span th:text="${i.nombre}">Zapato</span> · talla <span th:text="${i.talla}">40</span></span>
+          <span th:text="${@dinero.formato(i.subtotal)}">$0</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between"><span>Subtotal</span><span th:text="${@dinero.formato(carrito.subtotal)}">$0</span></li>
+        <!-- REQ-ZAP-025: el IVA y el total se muestran antes de confirmar -->
+        <li class="list-group-item d-flex justify-content-between"><span>IVA (19 %)</span><span th:text="${@dinero.formato(carrito.iva)}">$0</span></li>
+        <li class="list-group-item d-flex justify-content-between fw-bold"><span>Total</span><span th:text="${@dinero.formato(carrito.total)}">$0</span></li>
+      </ul>
+    </div>
+    <div class="col-md-5">
+      <form class="card card-body shadow-sm" th:action="@{/pedidos/confirmar}" method="post">
+        <div class="mb-3">
+          <label class="form-label" for="direccion">Dirección de entrega</label>
+          <textarea class="form-control" id="direccion" name="direccion" rows="2" maxlength="250" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="metodoPago">Método de pago</label>
+          <select class="form-select" id="metodoPago" name="metodoPago" required>
+            <option th:each="m : ${metodos}" th:value="${m}" th:text="${m.etiqueta}"></option>
+          </select>
+          <div class="form-text">No hay pasarela de pagos: el método solo queda registrado en el pedido.</div>
+        </div>
+        <button class="btn btn-dark" type="submit">Confirmar pedido</button>
+        <a class="btn btn-link" th:href="@{/carrito}">Volver al carrito</a>
+      </form>
+    </div>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

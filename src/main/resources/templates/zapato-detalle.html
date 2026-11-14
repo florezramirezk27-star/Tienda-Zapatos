@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${zapato.nombre})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4 pagina">
+  <div th:replace="~{fragments/layout :: alertas}"></div>
+  <a class="enlace-volver" th:href="@{/catalogo}">&larr; Volver al catálogo</a>
+
+  <div class="row g-4 mt-1">
+    <div class="col-md-5">
+      <img th:replace="~{fragments/layout :: foto(${zapato}, 'img-fluid w-100 zapato-img detalle-foto')}">
+    </div>
+    <div class="col-md-7">
+      <div class="zapato-meta" th:text="${zapato.marca} + ' · ' + ${zapato.categoria}">Marca · Categoría</div>
+      <h1 class="titulo-pagina" th:text="${zapato.nombre}">Nombre</h1>
+      <div class="precio precio-grande" th:text="${@dinero.formato(zapato.precio)}">$0</div>
+      <div class="text-muted mb-3">Precio sin IVA · Color: <span th:text="${zapato.color}">color</span> · Ref. <span th:text="${zapato.referencia}">ref</span></div>
+      <p th:if="${zapato.descripcion}" th:text="${zapato.descripcion}"></p>
+
+      <h2 class="seccion-sub mt-4">Tallas</h2>
+      <p class="text-muted" sec:authorize="isAnonymous()">
+        <a th:href="@{/login}">Inicia sesión</a> o <a th:href="@{/registro}">regístrate</a> como cliente para comprar.
+      </p>
+      <table class="table align-middle tabla-tallas">
+        <thead><tr><th>Talla</th><th>Disponibilidad</th><th sec:authorize="hasRole('CLIENTE')"></th></tr></thead>
+        <tbody>
+          <tr th:each="t : ${zapato.tallas}">
+            <td th:text="${t.talla}">40</td>
+            <td>
+              <!-- REQ-ZAP-019: con stock 0 la talla se muestra como «Agotada» -->
+              <span class="badge etiqueta-agotado" th:if="${t.agotada}">Agotada</span>
+              <span th:unless="${t.agotada}" th:text="${t.stock} + ' disponibles'">3 disponibles</span>
+            </td>
+            <td sec:authorize="hasRole('CLIENTE')">
+              <form class="d-flex gap-2" th:action="@{/carrito/agregar}" method="post">
+                <input type="hidden" name="tallaId" th:value="${t.id}">
+                <input class="form-control" style="width: 5rem" type="number" name="cantidad"
+                       min="1" value="1" th:disabled="${t.agotada}" aria-label="Cantidad">
+                <button class="btn btn-naranja" type="submit" th:disabled="${t.agotada}">Agregar</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(titulo)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${titulo} + ' · Tienda de Zapatos'">Tienda de Zapatos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<!-- Barra de navegación: cada rol ve solo sus opciones (HU-01, AC-001.1) -->
+<nav th:fragment="nav" class="navbar navbar-expand-lg navbar-light barra sticky-top">
+  <div class="container">
+    <a class="navbar-brand marca" th:href="@{/}"><span class="marca-icono" aria-hidden="true">👟</span> Tienda <span class="marca-acento">de Zapatos</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"
+            aria-controls="menu" aria-expanded="false" aria-label="Abrir menú">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" th:href="@{/catalogo}">Catálogo</a></li>
+
+        <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')"><a class="nav-link" th:href="@{/admin/usuarios}">Usuarios</a></li>
+        <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR','ALMACENISTA')"><a class="nav-link" th:href="@{/almacen/zapatos}">Zapatos</a></li>
+        <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','ALMACENISTA')"><a class="nav-link" th:href="@{/almacen/inventario}">Inventario</a></li>
+        <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','VENDEDOR','ALMACENISTA')"><a class="nav-link" th:href="@{/gestion/pedidos}">Pedidos</a></li>
+        <li class="nav-item" sec:authorize="hasRole('VENDEDOR')"><a class="nav-link" th:href="@{/ventas/nueva}">Nueva venta</a></li>
+        <li class="nav-item" sec:authorize="hasRole('GERENTE')"><a class="nav-link" th:href="@{/reportes/ventas}">Reporte de ventas</a></li>
+
+        <li class="nav-item" sec:authorize="hasRole('CLIENTE')">
+          <a class="nav-link" th:href="@{/carrito}">Carrito
+            <span class="badge rounded-pill text-bg-warning" th:text="${@carrito.unidades}">0</span></a>
+        </li>
+        <li class="nav-item" sec:authorize="hasRole('CLIENTE')"><a class="nav-link" th:href="@{/mis-pedidos}">Mis pedidos</a></li>
+      </ul>
+
+      <div class="d-flex align-items-center gap-2">
+        <th:block sec:authorize="isAnonymous()">
+          <a class="btn btn-outline-primary" th:href="@{/login}">Ingresar</a>
+          <a class="btn btn-primary" th:href="@{/registro}">Registrarme</a>
+        </th:block>
+        <th:block sec:authorize="isAuthenticated()">
+          <small class="d-none d-lg-inline fw-semibold">
+            <span sec:authentication="name">usuario</span>
+          </small>
+          <form th:action="@{/logout}" method="post" class="m-0">
+            <button class="btn btn-outline-primary" type="submit">Cerrar sesión</button>
+          </form>
+        </th:block>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mensajes de éxito y de error (los envía el controlador como flash) -->
+<div th:fragment="alertas">
+  <div class="alert alert-success" role="alert" th:if="${mensaje}" th:text="${mensaje}"></div>
+  <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}"></div>
+</div>
+
+<!-- Insignia de estado de un pedido -->
+<span th:fragment="estado(e)" class="badge"
+      th:classappend="${e.name() == 'PENDIENTE'} ? 'text-bg-warning' : (${e.name() == 'CANCELADO'} ? 'text-bg-danger' : (${e.name() == 'ENTREGADO'} ? 'text-bg-success' : 'text-bg-primary'))"
+      th:text="${e}">PENDIENTE</span>
+
+<!-- Pie de página: solo se incluye desde la página principal (catalogo.html, cuando ${inicio}) -->
+<footer th:fragment="pie" class="pie">
+  <div class="container py-5">
+    <div class="row g-4">
+      <div class="col-12 col-md-5">
+        <div class="pie-marca">👟 Tienda <span class="marca-acento">de Zapatos</span></div>
+        <p class="mt-2 mb-0">Calzado para cada paso: deportivo, casual, formal, sandalias y botas.</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <h2 class="pie-titulo">Tienda</h2>
+        <ul class="list-unstyled mb-0">
+          <li><a th:href="@{/catalogo}">Catálogo</a></li>
+          <li><a th:href="@{/login}">Ingresar</a></li>
+          <li><a th:href="@{/registro}">Crear cuenta</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-4">
+        <h2 class="pie-titulo">Compra</h2>
+        <ul class="list-unstyled mb-0">
+          <li>Tallas 34 a 45</li>
+          <li>Factura en PDF</li>
+          <li>Pago: efectivo, tarjeta, transferencia o contra entrega</li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <div class="text-center">Tienda de Zapatos · Proyecto académico UTS · Datos ficticios</div>
+  </div>
+</footer>
+
+<!-- Scripts de Bootstrap (menú móvil); va en todas las páginas, a diferencia del pie -->
+<th:block th:fragment="scripts">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</th:block>
+
+<!-- Foto del zapato: la propia del producto si tiene; si no, una foto de su categoría (Unsplash License) -->
+<img th:fragment="foto(z, clase)" th:class="${clase}" loading="lazy"
+     th:with="fotos=${ {'Deportivo':'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&amp;fit=crop&amp;w=900&amp;q=80',
+                        'Casual':'https://images.unsplash.com/photo-1676379827610-c380c52db0c6?auto=format&amp;fit=crop&amp;w=900&amp;q=80',
+                        'Formal':'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?auto=format&amp;fit=crop&amp;w=900&amp;q=80',
+                        'Bota':'https://images.unsplash.com/photo-1575987116913-e96e7d490b8a?auto=format&amp;fit=crop&amp;w=900&amp;q=80',
+                        'Sandalia':'https://images.unsplash.com/photo-1732708862549-714f7478ca31?auto=format&amp;fit=crop&amp;w=900&amp;q=80'} }"
+     th:src="${z.imagen} ?: (${fotos[z.categoria]} ?: @{/img/zapato.svg})" th:alt="${z.nombre}">
+
+</body>
+</html>

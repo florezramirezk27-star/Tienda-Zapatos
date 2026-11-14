@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Inventario')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+  <div th:replace="~{fragments/layout :: alertas}"></div>
+  <h1 class="h3 mb-3">Inventario por talla</h1>
+
+  <!-- HU-06: solo el almacenista registra movimientos; los demás roles solo consultan -->
+  <form class="card card-body shadow-sm mb-4" sec:authorize="hasRole('ALMACENISTA')"
+        th:action="@{/almacen/inventario/movimiento}" method="post">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label small mb-1" for="tallaId">Zapato y talla</label>
+        <select class="form-select" id="tallaId" name="tallaId" required>
+          <optgroup th:each="z : ${zapatos}" th:label="${z.nombre} + ' (' + ${z.referencia} + ')'">
+            <option th:each="t : ${z.tallas}" th:value="${t.id}" th:text="'Talla ' + ${t.talla} + ' · stock ' + ${t.stock}"></option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small mb-1" for="tipo">Tipo</label>
+        <select class="form-select" id="tipo" name="tipo">
+          <option value="ENTRADA">Entrada de mercancía</option>
+          <option value="AJUSTE">Ajuste (puede ser negativo)</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label small mb-1" for="cantidad">Cantidad</label>
+        <input class="form-control" type="number" id="cantidad" name="cantidad" required>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-dark w-100" type="submit">Registrar</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="table-responsive mb-4">
+    <table class="table table-sm table-bordered bg-white shadow-sm tabla-stock">
+      <thead class="table-light">
+        <tr>
+          <th class="text-start">Zapato</th>
+          <th th:each="t : ${#numbers.sequence(34, 45)}" th:text="${t}">34</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="z : ${zapatos}" th:classappend="${!z.activo} ? 'text-muted'">
+          <td class="text-start" th:text="${z.nombre}">Zapato</td>
+          <td th:each="t : ${z.tallas}" th:text="${t.stock}" th:classappend="${t.agotada} ? 'stock-cero'">0</td>
+          <td class="fw-bold" th:text="${z.stockTotal}">0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="h5">Últimos movimientos</h2>
+  <div class="table-responsive">
+    <table class="table table-sm bg-white shadow-sm">
+      <thead class="table-light">
+        <tr><th>Fecha</th><th>Tipo</th><th>Zapato</th><th class="text-center">Talla</th><th class="text-center">Cantidad</th><th>Usuario</th><th>Pedido</th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="m : ${movimientos}">
+          <td th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
+          <td th:text="${m.tipo.etiqueta}">Tipo</td>
+          <td th:text="${m.tallaStock.zapato.nombre}">Zapato</td>
+          <td class="text-center" th:text="${m.tallaStock.talla}">40</td>
+          <td class="text-center" th:text="${m.cantidad}">1</td>
+          <td th:text="${m.usuario.nombre}">Usuario</td>
+          <td th:text="${m.referencia}">—</td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(movimientos)}"><td colspan="7" class="text-center text-muted">Sin movimientos todavía</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

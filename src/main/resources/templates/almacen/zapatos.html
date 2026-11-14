@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Zapatos')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main class="container py-4">
+  <div th:replace="~{fragments/layout :: alertas}"></div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Zapatos del catálogo</h1>
+    <a class="btn btn-dark" th:href="@{/almacen/zapatos/nuevo}">Nuevo zapato</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table bg-white shadow-sm align-middle">
+      <thead class="table-light">
+        <tr><th>Referencia</th><th>Nombre</th><th>Marca</th><th>Categoría</th><th>Color</th><th class="text-end">Precio</th><th class="text-center">Stock</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr th:each="z : ${zapatos}">
+          <td><code th:text="${z.referencia}">ZAP-0</code></td>
+          <td th:text="${z.nombre}">Nombre</td>
+          <td th:text="${z.marca}">Marca</td>
+          <td th:text="${z.categoria}">Cat.</td>
+          <td th:text="${z.color}">Color</td>
+          <td class="text-end" th:text="${@dinero.formato(z.precio)}">$0</td>
+          <td class="text-center" th:text="${z.stockTotal}">0</td>
+          <td>
+            <span class="badge text-bg-success" th:if="${z.activo}">Activo</span>
+            <span class="badge text-bg-secondary" th:unless="${z.activo}">Inactivo</span>
+          </td>
+          <td class="text-end">
+            <div class="d-flex gap-1 justify-content-end">
+              <a class="btn btn-outline-dark btn-sm" th:href="@{/almacen/zapatos/{id}/editar(id=${z.id})}">Editar</a>
+              <!-- REQ-ZAP-013: se oculta del catálogo público; sus ventas anteriores no cambian -->
+              <form th:if="${z.activo}" th:action="@{/almacen/zapatos/{id}/desactivar(id=${z.id})}" method="post"
+                    onsubmit="return confirm('¿Desactivar este zapato? Dejará de verse en el catálogo.');">
+                <button class="btn btn-outline-danger btn-sm" type="submit">Desactivar</button>
+              </form>
+              <form th:unless="${z.activo}" th:action="@{/almacen/zapatos/{id}/activar(id=${z.id})}" method="post">
+                <button class="btn btn-outline-success btn-sm" type="submit">Activar</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
