@@ -45,7 +45,8 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(a -> a
                 .requestMatchers("/", "/catalogo", "/zapatos/**", "/registro", "/login",
-                        "/error", "/error/**", "/css/**", "/js/**", "/img/**").permitAll()
+                        "/error", "/error/**", "/css/**", "/js/**", "/img/**",
+                        "/fonts/**", "/vendor/**", "/favicon.ico").permitAll()
                 // HU-03: gestión de usuarios y roles
                 .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
                 // HU-04: catálogo de zapatos

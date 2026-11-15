@@ -17,11 +17,20 @@ public final class ZapatoSpecs {
     }
 
     /** Zapatos activos que cumplen todos los filtros que no sean nulos. */
-    public static Specification<Zapato> catalogo(String marca, String categoria, Integer talla,
+    public static Specification<Zapato> catalogo(String q, String marca, String categoria, Integer talla,
                                                  BigDecimal precioMin, BigDecimal precioMax) {
         return (root, query, cb) -> {
             List<Predicate> filtros = new ArrayList<>();
             filtros.add(cb.isTrue(root.get("activo")));
+            if (q != null) {
+                // Búsqueda libre por nombre, marca, categoría o referencia.
+                String patron = "%" + q.toLowerCase() + "%";
+                filtros.add(cb.or(
+                        cb.like(cb.lower(root.get("nombre")), patron),
+                        cb.like(cb.lower(root.get("marca")), patron),
+                        cb.like(cb.lower(root.get("categoria")), patron),
+                        cb.like(cb.lower(root.get("referencia")), patron)));
+            }
             if (marca != null) {
                 filtros.add(cb.equal(cb.lower(root.get("marca")), marca.toLowerCase()));
             }

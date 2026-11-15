@@ -6,203 +6,215 @@
 
 <main id="main-content">
 
-  <!-- ===== PÁGINA PRINCIPAL (HOME) ===== -->
+  <!-- ===== PORTADA ===== -->
   <th:block th:if="${inicio}">
 
-    <!-- HERO PRINCIPAL -->
-    <section class="hero bg-gradient-mesh" aria-labelledby="hero-title">
-      <div class="hero-shape hero-shape-1" aria-hidden="true"></div>
-      <div class="hero-shape hero-shape-2" aria-hidden="true"></div>
-      <div class="hero-shape hero-shape-3" aria-hidden="true"></div>
-
+    <section class="hero" aria-labelledby="hero-title">
       <div class="container">
-        <div class="row align-items-center g-5">
-          <div class="col-lg-6 hero-content">
-            <span class="hero-badge">Nueva colección Otoño-Invierno</span>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <p class="eyebrow">Nueva temporada · Calzado STEP</p>
             <h1 id="hero-title" class="hero-title">
-              Tu estilo,<br>
-              <span class="accent">tu paso</span>
+              El paso que<br>
+              te <em>define</em>.
             </h1>
             <p class="hero-text">
-              Descubre calzado diseñado para moverte con confianza.
-              Zapatillas urbanas, botas elegantes, formales impecables
-              y sandalias de verano. Envío gratis desde $150.000.
+              Calzado seleccionado para acompañarte del trabajo a la calle.
+              Encuentra tu talla exacta, revisa la disponibilidad real y compra en minutos.
             </p>
             <div class="hero-actions">
               <a class="btn btn-brand btn-lg" th:href="@{/catalogo}">
                 Explorar catálogo
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
+                <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg>
               </a>
-              <a class="btn btn-outline-brand btn-lg" href="#destacados">Ver destacados</a>
+              <a class="btn btn-outline btn-lg" href="#destacados">
+                Ver selección
+              </a>
+            </div>
+            <div class="hero-proof">
+              <div><strong>34–45</strong><span>Tallas disponibles</span></div>
+              <div><strong>Stock real</strong><span>Actualizado por talla</span></div>
+              <div><strong>24–48 h</strong><span>Envío en ciudades principales</span></div>
             </div>
           </div>
 
-          <div class="col-lg-6 hero-visual">
-            <div class="hero-image-frame">
-              <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80"
-                   alt="Zapatillas deportivas urbanas color naranja y blanco sobre fondo neutro"
-                   fetchpriority="high"
-                   width="600" height="450">
+          <div class="hero-visual">
+            <div class="hero-image">
+              <img th:src="@{/img/hero.jpg}" alt="Zapatilla deportiva en tonos naranja y blanco sobre fondo neutro" width="900" height="760" fetchpriority="high">
+            </div>
+            <div class="hero-card">
+              <svg th:replace="~{fragments/iconos :: icono('truck', 'icon')}"></svg>
+              <div>
+                <strong>Envío gratis</strong>
+                <small>En compras desde $150.000</small>
+              </div>
+            </div>
+            <div class="hero-sticker" aria-hidden="true">
+              <strong>STEP</strong>
+              <span>Hecho para<br>caminar</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- CATEGORÍAS VISUALES -->
-    <section class="section bg-cream" aria-labelledby="categorias-title" th:if="${not #lists.isEmpty(categorias)}">
+    <!-- CATEGORÍAS -->
+    <section class="section" aria-labelledby="categorias-title">
       <div class="container">
-        <header class="text-center mb-5">
-          <h2 id="categorias-title" class="section-title">Compra por categoría</h2>
-          <p class="section-subtitle">Encuentra el par perfecto para cada ocasión</p>
-        </header>
+        <div class="section-head">
+          <p class="eyebrow">Compra por categoría</p>
+          <h2 id="categorias-title">Un par para cada ocasión</h2>
+          <p>Desde el entrenamiento hasta una cena formal. Encuentra el estilo que va contigo.</p>
+        </div>
 
         <div class="category-grid">
-          <a class="category-card" th:href="@{/catalogo(categoria=Deportivo)}"
-             style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
+          <a class="category-card" th:href="@{/catalogo(categoria=Deportivo)}">
+            <img th:src="@{/img/categorias/deportivo.jpg}" alt="Zapatillas deportivas" loading="lazy">
             <div class="category-card-content">
-              <div class="category-card-icon">🏃</div>
               <h3 class="category-card-name">Deportivos</h3>
-              <p class="category-card-count">Rendimiento y estilo</p>
+              <span class="category-card-link">Ver categoría <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg></span>
             </div>
           </a>
-
-          <a class="category-card" th:href="@{/catalogo(categoria=Casual)}"
-             style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
+          <a class="category-card" th:href="@{/catalogo(categoria=Casual)}">
+            <img th:src="@{/img/categorias/casual.jpg}" alt="Zapatillas casuales" loading="lazy">
             <div class="category-card-content">
-              <div class="category-card-icon">👟</div>
               <h3 class="category-card-name">Casuales</h3>
-              <p class="category-card-count">Tu día a día</p>
+              <span class="category-card-link">Ver categoría <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg></span>
             </div>
           </a>
-
-          <a class="category-card" th:href="@{/catalogo(categoria=Formal)}"
-             style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1614252369475-531eba835eb1?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
+          <a class="category-card" th:href="@{/catalogo(categoria=Formal)}">
+            <img th:src="@{/img/categorias/formal.jpg}" alt="Calzado formal en cuero" loading="lazy">
             <div class="category-card-content">
-              <div class="category-card-icon">👔</div>
               <h3 class="category-card-name">Formales</h3>
-              <p class="category-card-count">Elegancia pura</p>
+              <span class="category-card-link">Ver categoría <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg></span>
             </div>
           </a>
-
-          <a class="category-card" th:href="@{/catalogo(categoria=Bota)}"
-             style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1575987116913-e96e7d490b8a?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
+          <a class="category-card" th:href="@{/catalogo(categoria=Bota)}">
+            <img th:src="@{/img/categorias/bota.jpg}" alt="Botas de montaña" loading="lazy">
             <div class="category-card-content">
-              <div class="category-card-icon">🥾</div>
               <h3 class="category-card-name">Botas</h3>
-              <p class="category-card-count">Protección con estilo</p>
+              <span class="category-card-link">Ver categoría <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg></span>
             </div>
           </a>
-
-          <a class="category-card" th:href="@{/catalogo(categoria=Sandalia)}"
-             style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1732708862549-714f7478ca31?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
+          <a class="category-card" th:href="@{/catalogo(categoria=Sandalia)}">
+            <img th:src="@{/img/categorias/sandalia.jpg}" alt="Sandalias de verano" loading="lazy">
             <div class="category-card-content">
-              <div class="category-card-icon">🩴</div>
               <h3 class="category-card-name">Sandalias</h3>
-              <p class="category-card-count">Verano libre</p>
+              <span class="category-card-link">Ver categoría <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg></span>
             </div>
           </a>
         </div>
       </div>
     </section>
 
-    <!-- PRODUCTOS DESTACADOS -->
-    <section class="section bg-white" id="destacados" aria-labelledby="destacados-title">
+    <!-- SELECCIÓN DE LA SEMANA -->
+    <section class="section section-alt" id="destacados" aria-labelledby="destacados-title">
       <div class="container">
-        <header class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-5">
-          <h2 id="destacados-title" class="section-title mb-0">Selección de la semana</h2>
-          <a class="btn btn-outline-brand" th:href="@{/catalogo}">Ver todo el catálogo</a>
-        </header>
+        <div class="section-head" style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; max-width:none;">
+          <div>
+            <p class="eyebrow">Selección STEP</p>
+            <h2 id="destacados-title" style="margin-bottom:4px;">Pensados para dar el siguiente paso</h2>
+            <p>Modelos disponibles en el catálogo, con stock real por talla.</p>
+          </div>
+          <a class="btn btn-outline d-none d-md-inline-flex" th:href="@{/catalogo}">Ver todo</a>
+        </div>
 
         <div class="alert alert-info text-center" th:if="${pagina.empty}" role="status">
-          Todavía no hay zapatos en el catálogo. ¡Vuelve pronto!
+          Todavía no hay zapatos publicados. Vuelve pronto.
         </div>
 
-        <div class="row g-4" th:unless="${pagina.empty}">
+        <div class="product-grid" th:unless="${pagina.empty}">
           <th:block th:each="z, fila : ${pagina.content}">
-            <div class="col-12 col-sm-6 col-lg-3" th:if="${fila.index < 8}">
-              <a class="product-card focus-ring" th:href="@{/zapatos/{id}(id=${z.id})}" aria-label="Ver detalles de ${z.nombre}">
-                <div class="product-card-image">
-                  <img th:replace="~{fragments/layout :: foto(${z}, 'zapato-img')}">
-                  <span class="product-badge badge-new" th:if="${fila.index < 3}">Nuevo</span>
-                  <span class="product-badge badge-sale" th:if="${fila.index >= 3 and fila.index < 6}">Oferta</span>
+            <a class="product-card" th:if="${fila.index < 8}" th:href="@{/zapatos/{id}(id=${z.id})}" th:aria-label="'Ver ' + ${z.nombre}">
+              <div class="product-card-image">
+                <img class="zapato-img" th:replace="~{fragments/layout :: foto(${z}, 'zapato-img')}">
+                <span class="product-badge badge-out" th:if="${z.stockTotal == 0}">Agotado</span>
+                <span class="product-badge badge-sale" th:if="${z.stockTotal > 0 and z.stockTotal <= 5}">Últimas unidades</span>
+              </div>
+              <div class="product-card-body">
+                <p class="product-card-meta" th:text="${z.marca} + ' · ' + ${z.categoria}">Marca · Categoría</p>
+                <h3 class="product-card-title" th:text="${z.nombre}">Nombre del zapato</h3>
+                <div class="product-card-price" th:text="${@dinero.formato(z.precio)}">$0</div>
+                <div class="product-card-foot">
+                  <span class="product-card-link">Ver producto <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg></span>
+                  <span class="product-card-stock" th:if="${z.stockTotal > 0}" th:classappend="${z.stockTotal <= 5} ? ' pocas'" th:text="${z.stockTotal <= 5 ? 'Pocas unidades' : 'Disponible'}">Disponible</span>
+                  <span class="product-card-stock sin-stock" th:if="${z.stockTotal == 0}">Agotado</span>
                 </div>
-                <div class="product-card-body">
-                  <p class="product-card-meta" th:text="${z.marca} + ' · ' + ${z.categoria}">Marca · Categoría</p>
-                  <h3 class="product-card-title" th:text="${z.nombre}">Nombre del zapato</h3>
-                  <div class="product-card-price" th:text="${@dinero.formato(z.precio)}">$0</div>
-                </div>
-              </a>
-            </div>
+              </div>
+            </a>
           </th:block>
         </div>
-      </div>
-    </section>
 
-    <!-- PROMOCIÓN ESPECIAL -->
-    <section class="section bg-gradient-orange" aria-labelledby="promo-title">
-      <div class="container">
-        <div class="promo-banner">
-          <div class="promo-content">
-            <span class="promo-label">Promoción limitada</span>
-            <h2 id="promo-title" class="promo-title">Lleva 2, el 2º al 50%</h2>
-            <p class="promo-text">
-              Renueva tu armario con estilo. Aplica automáticamente en carrito
-              al añadir dos pares de la colección seleccionada.
-            </p>
-            <a class="btn btn-warning btn-lg" th:href="@{/catalogo}">Aprovechar oferta</a>
-          </div>
-          <div class="promo-visual">
-            <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=600&q=80"
-                 alt="Dos pares de zapatillas modernas apiladas creativamente"
-                 width="300" height="300">
-          </div>
+        <div class="text-center mt-4 d-md-none">
+          <a class="btn btn-outline" th:href="@{/catalogo}">Ver todo el catálogo</a>
         </div>
       </div>
     </section>
 
-    <!-- BENEFICIOS -->
-    <section class="section bg-cream-2" aria-labelledby="beneficios-title">
+    <!-- CONFIANZA / PROCESO -->
+    <section class="section-sm">
       <div class="container">
-        <header class="text-center mb-5">
-          <h2 id="beneficios-title" class="section-title">Por qué elegir STEP</h2>
-          <p class="section-subtitle">Más que zapatos, una experiencia de compra pensada para ti</p>
-        </header>
-
         <div class="benefits-grid">
           <article class="benefit-card">
-            <div class="benefit-icon orange" aria-hidden="true">📏</div>
-            <h3 class="benefit-title">Tu talla, garantizada</h3>
-            <p class="benefit-text">Tallas del 34 al 45 con disponibilidad en tiempo real. Cambio gratis si no queda bien.</p>
+            <div class="benefit-icon"><svg th:replace="~{fragments/iconos :: icono('ruler', 'icon')}"></svg></div>
+            <div>
+              <h3 class="benefit-title">Tu talla, sin adivinar</h3>
+              <p class="benefit-text">Tallas de la 34 a la 45 con disponibilidad real por cada modelo.</p>
+            </div>
           </article>
-
           <article class="benefit-card">
-            <div class="benefit-icon blue" aria-hidden="true">💳</div>
-            <h3 class="benefit-title">Paga como quieras</h3>
-            <p class="benefit-text">Tarjeta, transferencia, Nequi, Daviplata, efectivo o contra entrega. Tú decides.</p>
+            <div class="benefit-icon"><svg th:replace="~{fragments/iconos :: icono('truck', 'icon')}"></svg></div>
+            <div>
+              <h3 class="benefit-title">Envío express</h3>
+              <p class="benefit-text">Gratis desde $150.000. Entrega en 24–48 h en ciudades principales.</p>
+            </div>
           </article>
-
           <article class="benefit-card">
-            <div class="benefit-icon yellow" aria-hidden="true">🧾</div>
-            <h3 class="benefit-title">Factura al instante</h3>
-            <p class="benefit-text">Descarga tu factura en PDF desde tu cuenta en cuanto se confirma el pedido.</p>
+            <div class="benefit-icon"><svg th:replace="~{fragments/iconos :: icono('shield-check', 'icon')}"></svg></div>
+            <div>
+              <h3 class="benefit-title">Compra protegida</h3>
+              <p class="benefit-text">Pago contra entrega, transferencia o tarjeta en puntos autorizados.</p>
+            </div>
           </article>
-
           <article class="benefit-card">
-            <div class="benefit-icon green" aria-hidden="true">📦</div>
-            <h3 class="benefit-title">Envío express</h3>
-            <p class="benefit-text">Gratis desde $150.000. Llega en 24-48h a ciudades principales. Rastrea tu pedido.</p>
+            <div class="benefit-icon"><svg th:replace="~{fragments/iconos :: icono('refresh', 'icon')}"></svg></div>
+            <div>
+              <h3 class="benefit-title">Cambios sencillos</h3>
+              <p class="benefit-text">Si la talla no queda perfecta, te ayudamos a cambiarla.</p>
+            </div>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOQUE DE EXPERIENCIA -->
+    <section class="section">
+      <div class="container">
+        <div class="promo">
+          <div>
+            <span class="promo-label">Compra con información real</span>
+            <h2>Elige tu talla.<br>Nosotros hacemos el resto.</h2>
+            <p>
+              En cada ficha verás las tallas disponibles y las unidades exactas.
+              Agrega al carrito en el mismo lugar, sin desplazarte por toda la página.
+            </p>
+            <a class="btn btn-brand btn-lg" th:href="@{/catalogo}">
+              Encontrar mi par
+              <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg>
+            </a>
+          </div>
+          <div class="promo-visual" aria-hidden="true">
+            <img th:src="@{/img/hero.jpg}" alt="" loading="lazy">
+          </div>
         </div>
       </div>
     </section>
 
     <!-- MARCAS -->
-    <section class="section bg-white" th:if="${not #lists.isEmpty(marcas)}" aria-labelledby="marcas-title">
+    <section class="section-sm" th:if="${not #lists.isEmpty(marcas)}" aria-labelledby="marcas-title">
       <div class="container text-center">
-        <h2 id="marcas-title" class="section-title">Marcas que confían en nosotros</h2>
+        <p class="eyebrow" style="justify-content:center;">Marcas en STEP</p>
+        <h2 id="marcas-title" class="h4" style="font-family:var(--font-body); font-weight:500; color:var(--muted); margin-bottom:18px;">Explora por marca</h2>
         <div class="brands-strip">
           <a class="brand-chip" th:each="m : ${marcas}" th:href="@{/catalogo(marca=${m})}" th:text="${m}">Marca</a>
         </div>
@@ -211,95 +223,194 @@
 
   </th:block>
 
-  <!-- ===== CATÁLOGO COMPLETO (VISTA /catalogo) ===== -->
-  <div class="container" th:unless="${inicio}" style="padding: var(--space-2xl) var(--space-md);">
-    <header class="mb-5">
-      <h1 class="display-title" style="font-size: var(--fs-h1); font-weight: 800;">Catálogo completo</h1>
-      <p class="text-muted" style="font-size: var(--fs-body-lg);">Filtra, ordena y encuentra tu par ideal</p>
-    </header>
-
-    <!-- FILTROS -->
-    <form class="card filtros" method="get" th:action="@{/catalogo}" aria-label="Filtros de catálogo">
-      <div class="card-body">
-        <div class="row g-3 align-items-end">
-          <div class="col-6 col-md-3">
-            <label class="form-label" for="marca">Marca</label>
-            <select class="form-select" id="marca" name="marca">
-              <option value="">Todas las marcas</option>
-              <option th:each="m : ${marcas}" th:value="${m}" th:text="${m}" th:selected="${m == marca}"></option>
-            </select>
-          </div>
-          <div class="col-6 col-md-3">
-            <label class="form-label" for="categoria">Categoría</label>
-            <select class="form-select" id="categoria" name="categoria">
-              <option value="">Todas las categorías</option>
-              <option th:each="c : ${categorias}" th:value="${c}" th:text="${c}" th:selected="${c == categoria}"></option>
-            </select>
-          </div>
-          <div class="col-4 col-md-2">
-            <label class="form-label" for="talla">Talla</label>
-            <select class="form-select" id="talla" name="talla">
-              <option value="">Todas</option>
-              <option th:each="t : ${#numbers.sequence(34, 45)}" th:value="${t}" th:text="${t}" th:selected="${talla != null and t == talla}"></option>
-            </select>
-          </div>
-          <div class="col-4 col-md-2">
-            <label class="form-label" for="precioMin">Precio mín.</label>
-            <input class="form-control" type="number" min="0" step="1000" id="precioMin" name="precioMin" th:value="${precioMin}" placeholder="0">
-          </div>
-          <div class="col-4 col-md-2">
-            <label class="form-label" for="precioMax">Precio máx.</label>
-            <input class="form-control" type="number" min="0" step="1000" id="precioMax" name="precioMax" th:value="${precioMax}" placeholder="500000">
-          </div>
-          <div class="col-12 col-md-auto d-flex gap-2 flex-wrap">
-            <button class="btn btn-brand" type="submit">Filtrar</button>
-            <a class="btn btn-outline-blue" th:href="@{/catalogo}">Limpiar</a>
-          </div>
+  <!-- ===== CATÁLOGO ===== -->
+  <th:block th:unless="${inicio}">
+    <header class="catalogo-hero">
+      <div class="container">
+        <div>
+          <nav aria-label="Miga de pan">
+            <ol class="breadcrumb" style="margin-bottom:10px;">
+              <li><a th:href="@{/}">Inicio</a></li>
+              <li><svg th:replace="~{fragments/iconos :: icono('chevron-right', 'icon')}"></svg></li>
+              <li aria-current="page">Catálogo</li>
+            </ol>
+          </nav>
+          <h1>Catálogo completo</h1>
+          <p>Filtra por marca, categoría, talla o precio y encuentra tu par ideal.</p>
+        </div>
+        <div class="catalogo-conteo">
+          <strong th:text="${pagina.totalElements}">0</strong> productos disponibles
         </div>
       </div>
-    </form>
+    </header>
 
-    <!-- RESULTADOS -->
-    <div class="alert alert-info text-center my-4" th:if="${pagina.empty}" role="status">
-      No encontramos zapatos con esos filtros. <a class="fw-bold" th:href="@{/catalogo}">Ver todo el catálogo</a>
-    </div>
+    <div class="container">
+      <div th:replace="~{fragments/layout :: alertas}"></div>
 
-    <div class="row g-4" th:unless="${pagina.empty}">
-      <div class="col-12 col-sm-6 col-lg-4 col-xl-3" th:each="z : ${pagina.content}">
-        <a class="product-card focus-ring" th:href="@{/zapatos/{id}(id=${z.id})}" aria-label="Ver detalles de ${z.nombre}">
-          <div class="product-card-image">
-            <img th:replace="~{fragments/layout :: foto(${z}, 'zapato-img')}">
-            <span class="product-badge badge-out" th:if="${z.stockTotal == 0}">Agotado</span>
+      <div class="catalogo-layout">
+        <!-- FILTROS -->
+        <details class="filtros-panel" open>
+          <summary class="filtros-resumen">
+            <strong>
+              <svg th:replace="~{fragments/iconos :: icono('sliders-horizontal', 'icon')}"></svg>
+              Filtros
+            </strong>
+            <svg class="chevron" th:replace="~{fragments/iconos :: icono('chevron-down', 'icon')}"></svg>
+          </summary>
+
+          <div class="filtros-head">
+            <h2>Filtros</h2>
+            <svg th:replace="~{fragments/iconos :: icono('sliders-horizontal', 'icon')}"></svg>
           </div>
-          <div class="product-card-body">
-            <p class="product-card-meta" th:text="${z.marca} + ' · ' + ${z.categoria}">Marca · Categoría</p>
-            <h3 class="product-card-title" th:text="${z.nombre}">Nombre</h3>
-            <div class="product-card-price" th:text="${@dinero.formato(z.precio)}">$0</div>
+
+          <form class="filtros-form" method="get" th:action="@{/catalogo}" aria-label="Filtros de catálogo">
+            <div class="form-group">
+              <label class="form-label" for="qCatalogo">Buscar</label>
+              <div class="input-icon">
+                <svg th:replace="~{fragments/iconos :: icono('search', 'icon')}"></svg>
+                <input class="form-control" type="search" id="qCatalogo" name="q" th:value="${q}" placeholder="Modelo, marca...">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="marca">Marca</label>
+              <select class="form-select" id="marca" name="marca">
+                <option value="">Todas las marcas</option>
+                <option th:each="m : ${marcas}" th:value="${m}" th:text="${m}" th:selected="${m == marca}"></option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="categoria">Categoría</label>
+              <select class="form-select" id="categoria" name="categoria">
+                <option value="">Todas las categorías</option>
+                <option th:each="c : ${categorias}" th:value="${c}" th:text="${c}" th:selected="${c == categoria}"></option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="talla">Talla</label>
+              <select class="form-select" id="talla" name="talla">
+                <option value="">Todas las tallas</option>
+                <option th:each="t : ${#numbers.sequence(34, 45)}" th:value="${t}" th:text="${t}" th:selected="${talla != null and t == talla}"></option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Rango de precio</label>
+              <div class="precio-row">
+                <input class="form-control" type="number" min="0" step="1000" id="precioMin" name="precioMin" th:value="${precioMin}" placeholder="Mín." aria-label="Precio mínimo">
+                <input class="form-control" type="number" min="0" step="1000" id="precioMax" name="precioMax" th:value="${precioMax}" placeholder="Máx." aria-label="Precio máximo">
+              </div>
+            </div>
+
+            <div class="filtros-acciones">
+              <button class="btn btn-brand" type="submit">
+                <svg th:replace="~{fragments/iconos :: icono('sliders-horizontal', 'icon-sm')}"></svg>
+                Aplicar filtros
+              </button>
+              <a class="filtros-borrar" th:href="@{/catalogo}">
+                <svg th:replace="~{fragments/iconos :: icono('x', 'icon-sm')}"></svg>
+                Limpiar filtros
+              </a>
+            </div>
+          </form>
+        </details>
+
+        <!-- RESULTADOS -->
+        <div class="catalogo-resultados">
+          <div class="catalogo-toolbar">
+            <div class="chips-filtros">
+              <span class="chip-filtro" th:if="${q}">
+                <strong>Búsqueda:</strong> <span th:text="${q}">q</span>
+                <a th:href="@{/catalogo(marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax})}" aria-label="Quitar búsqueda">
+                  <svg th:replace="~{fragments/iconos :: icono('x', 'icon')}"></svg>
+                </a>
+              </span>
+              <span class="chip-filtro" th:if="${marca}">
+                <strong>Marca:</strong> <span th:text="${marca}">marca</span>
+                <a th:href="@{/catalogo(q=${q},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax})}" aria-label="Quitar filtro de marca">
+                  <svg th:replace="~{fragments/iconos :: icono('x', 'icon')}"></svg>
+                </a>
+              </span>
+              <span class="chip-filtro" th:if="${categoria}">
+                <strong>Categoría:</strong> <span th:text="${categoria}">categoría</span>
+                <a th:href="@{/catalogo(q=${q},marca=${marca},talla=${talla},precioMin=${precioMin},precioMax=${precioMax})}" aria-label="Quitar filtro de categoría">
+                  <svg th:replace="~{fragments/iconos :: icono('x', 'icon')}"></svg>
+                </a>
+              </span>
+              <span class="chip-filtro" th:if="${talla != null}">
+                <strong>Talla:</strong> <span th:text="${talla}">40</span>
+                <a th:href="@{/catalogo(q=${q},marca=${marca},categoria=${categoria},precioMin=${precioMin},precioMax=${precioMax})}" aria-label="Quitar filtro de talla">
+                  <svg th:replace="~{fragments/iconos :: icono('x', 'icon')}"></svg>
+                </a>
+              </span>
+              <span class="chip-filtro" th:if="${precioMin != null or precioMax != null}">
+                <strong>Precio:</strong>
+                <span th:text="${precioMin != null ? @dinero.formato(precioMin) : '0'} + ' – ' + ${precioMax != null ? @dinero.formato(precioMax) : 'sin límite'}">rango</span>
+                <a th:href="@{/catalogo(q=${q},marca=${marca},categoria=${categoria},talla=${talla})}" aria-label="Quitar filtro de precio">
+                  <svg th:replace="~{fragments/iconos :: icono('x', 'icon')}"></svg>
+                </a>
+              </span>
+            </div>
+            <span class="catalogo-conteo">
+              <strong th:text="${pagina.numberOfElements}">0</strong> resultados en esta página
+            </span>
           </div>
-        </a>
+
+          <div class="empty-state" th:if="${pagina.empty}">
+            <svg th:replace="~{fragments/iconos :: icono('search', 'icon')}"></svg>
+            <h2>No encontramos zapatos con esos filtros</h2>
+            <p>Prueba con otra marca, talla o rango de precio. También puedes limpiar los filtros y ver todo el catálogo.</p>
+            <a class="btn btn-outline btn-sm" th:href="@{/catalogo}">Limpiar filtros</a>
+          </div>
+
+          <div class="product-grid product-grid-catalogo" th:unless="${pagina.empty}">
+            <a class="product-card" th:each="z : ${pagina.content}" th:href="@{/zapatos/{id}(id=${z.id})}" th:aria-label="'Ver ' + ${z.nombre}">
+              <div class="product-card-image">
+                <img class="zapato-img" th:replace="~{fragments/layout :: foto(${z}, 'zapato-img')}">
+                <span class="product-badge badge-out" th:if="${z.stockTotal == 0}">Agotado</span>
+                <span class="product-badge badge-sale" th:if="${z.stockTotal > 0 and z.stockTotal <= 5}">Últimas unidades</span>
+              </div>
+              <div class="product-card-body">
+                <p class="product-card-meta" th:text="${z.marca} + ' · ' + ${z.categoria}">Marca · Categoría</p>
+                <h3 class="product-card-title" th:text="${z.nombre}">Nombre</h3>
+                <div class="product-card-price" th:text="${@dinero.formato(z.precio)}">$0</div>
+                <div class="product-card-foot">
+                  <span class="product-card-link">Ver producto <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg></span>
+                  <span class="product-card-stock" th:if="${z.stockTotal > 0}" th:classappend="${z.stockTotal <= 5} ? ' pocas'" th:text="${z.stockTotal <= 5 ? 'Pocas unidades' : 'Disponible'}">Disponible</span>
+                  <span class="product-card-stock sin-stock" th:if="${z.stockTotal == 0}">Agotado</span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- PAGINACIÓN -->
+          <nav th:if="${pagina.totalPages > 1}" aria-label="Páginas del catálogo">
+            <ul class="pagination">
+              <li class="page-item" th:classappend="${pagina.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/catalogo(q=${q},marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax},pagina=${pagina.number - 1})}" aria-label="Página anterior">
+                  <svg th:replace="~{fragments/iconos :: icono('arrow-left', 'icon')}"></svg>
+                </a>
+              </li>
+              <li class="page-item" th:each="n : ${#numbers.sequence(0, pagina.totalPages - 1)}" th:classappend="${n == pagina.number} ? 'active'">
+                <a class="page-link" th:text="${n + 1}" th:href="@{/catalogo(q=${q},marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax},pagina=${n})}" th:aria-label="'Página ' + ${n + 1} + (${n == pagina.number} ? ', actual' : '')">1</a>
+              </li>
+              <li class="page-item" th:classappend="${pagina.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/catalogo(q=${q},marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax},pagina=${pagina.number + 1})}" aria-label="Página siguiente">
+                  <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
-
-    <!-- PAGINACIÓN -->
-    <nav class="mt-5" th:if="${pagina.totalPages > 1}" aria-label="Páginas del catálogo">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" th:classappend="${pagina.first} ? 'disabled'">
-          <a class="page-link" th:href="@{/catalogo(marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax},pagina=${pagina.number - 1})}" aria-label="Anterior">Anterior</a>
-        </li>
-        <li class="page-item" th:each="n : ${#numbers.sequence(0, pagina.totalPages - 1)}" th:classappend="${n == pagina.number} ? 'active'">
-          <a class="page-link" th:text="${n + 1}" th:href="@{/catalogo(marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax},pagina=${n})}">1</a>
-        </li>
-        <li class="page-item" th:classappend="${pagina.last} ? 'disabled'">
-          <a class="page-link" th:href="@{/catalogo(marca=${marca},categoria=${categoria},talla=${talla},precioMin=${precioMin},precioMax=${precioMax},pagina=${pagina.number + 1})}" aria-label="Siguiente">Siguiente</a>
-        </li>
-      </ul>
-    </nav>
-  </div>
+  </th:block>
 
 </main>
 
-<!-- FOOTER SOLO EN HOME -->
-<th:block th:if="${inicio}"><footer th:replace="~{fragments/layout :: pie}"></footer></th:block>
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

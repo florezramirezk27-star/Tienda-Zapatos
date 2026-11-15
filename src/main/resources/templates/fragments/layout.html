@@ -3,187 +3,296 @@
 <head th:fragment="head(titulo)">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title th:text="${titulo} + ' · STEP'">STEP · Tienda de Zapatos</title>
-  <meta name="description" content="STEP - Tu tienda de zapatos online. Zapatillas deportivas, casuales, formales, botas y sandalias. Envío gratis desde $150.000">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <title th:text="${titulo} + ' · STEP Calzado'">STEP · Calzado</title>
+  <meta name="description" content="STEP - Calzado con personalidad para cada paso. Zapatillas deportivas, casuales, formales, botas y sandalias. Envío gratis desde $150.000.">
+  <meta name="theme-color" content="#172A3A">
+  <link rel="icon" type="image/svg+xml" th:href="@{/img/favicon.svg}">
+  <link rel="stylesheet" th:href="@{/vendor/bootstrap.min.css}">
+  <link rel="stylesheet" th:href="@{/fonts/fonts.css}">
   <link rel="stylesheet" th:href="@{/css/app.css}">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E👟%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 
-<!-- ===== BARRA DE NAVEGACIÓN ===== -->
-<nav th:fragment="nav" class="navbar navbar-expand-lg barra" aria-label="Navegación principal">
-  <div class="container">
-    <a class="navbar-brand marca" th:href="@{/}" aria-label="STEP - Inicio">
-      <span class="marca-icono" aria-hidden="true">👟</span>
-      <span>STEP</span>
+<!-- ===== ENCABEZADO ===== -->
+<header th:fragment="nav" class="barra" role="banner">
+  <div class="container barra-inner">
+    <a class="marca" th:href="@{/}" aria-label="STEP Calzado - Inicio">
+      <span class="marca-monograma" aria-hidden="true">S</span>
+      <span class="marca-texto">STEP<small>calzado</small></span>
     </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
-            aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <nav class="nav-principal" aria-label="Navegación principal">
+      <a class="nav-enlace" th:classappend="${rutaActual == '/'} ? ' active'" th:href="@{/}">
+        <svg th:replace="~{fragments/iconos :: icono('house', 'icon-sm')}"></svg>
+        Inicio
+      </a>
+      <a class="nav-enlace" th:classappend="${rutaActual == '/catalogo' or #strings.startsWith(rutaActual, '/zapatos')} ? ' active'" th:href="@{/catalogo}">
+        <svg th:replace="~{fragments/iconos :: icono('grid', 'icon-sm')}"></svg>
+        Catálogo
+      </a>
 
-    <div class="collapse navbar-collapse" id="menuPrincipal">
-      <ul class="navbar-nav me-auto gap-1">
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{/catalogo}">Catálogo</a>
-        </li>
+      <div class="dropdown nav-gestion" sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','VENDEDOR','ALMACENISTA')">
+        <button class="nav-enlace dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <svg th:replace="~{fragments/iconos :: icono('sliders-horizontal', 'icon-sm')}"></svg>
+          Gestión
+        </button>
+        <ul class="dropdown-menu menu-gestion">
+          <li sec:authorize="hasRole('ADMINISTRADOR')">
+            <a class="dropdown-item" th:href="@{/admin/usuarios}">
+              <svg th:replace="~{fragments/iconos :: icono('user', 'icon-sm')}"></svg> Usuarios
+            </a>
+          </li>
+          <li sec:authorize="hasAnyRole('ADMINISTRADOR','ALMACENISTA')">
+            <a class="dropdown-item" th:href="@{/almacen/zapatos}">
+              <svg th:replace="~{fragments/iconos :: icono('shoe', 'icon-sm')}"></svg> Zapatos
+            </a>
+          </li>
+          <li sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','ALMACENISTA')">
+            <a class="dropdown-item" th:href="@{/almacen/inventario}">
+              <svg th:replace="~{fragments/iconos :: icono('package', 'icon-sm')}"></svg> Inventario
+            </a>
+          </li>
+          <li sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','VENDEDOR','ALMACENISTA')">
+            <a class="dropdown-item" th:href="@{/gestion/pedidos}">
+              <svg th:replace="~{fragments/iconos :: icono('package-check', 'icon-sm')}"></svg> Pedidos
+            </a>
+          </li>
+          <li sec:authorize="hasRole('VENDEDOR')">
+            <a class="dropdown-item" th:href="@{/ventas/nueva}">
+              <svg th:replace="~{fragments/iconos :: icono('plus', 'icon-sm')}"></svg> Nueva venta
+            </a>
+          </li>
+          <li sec:authorize="hasRole('GERENTE')">
+            <a class="dropdown-item" th:href="@{/reportes/ventas}">
+              <svg th:replace="~{fragments/iconos :: icono('tag', 'icon-sm')}"></svg> Reportes
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
-        <!-- Admin -->
-        <li class="nav-item" sec:authorize="hasRole('ADMINISTRADOR')">
-          <a class="nav-link" th:href="@{/admin/usuarios}">Usuarios</a>
-        </li>
-        <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR','ALMACENISTA')">
-          <a class="nav-link" th:href="@{/almacen/zapatos}">Zapatos</a>
-        </li>
-        <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','ALMACENISTA')">
-          <a class="nav-link" th:href="@{/almacen/inventario}">Inventario</a>
-        </li>
-        <li class="nav-item" sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','VENDEDOR','ALMACENISTA')">
-          <a class="nav-link" th:href="@{/gestion/pedidos}">Pedidos</a>
-        </li>
-        <li class="nav-item" sec:authorize="hasRole('VENDEDOR')">
-          <a class="nav-link" th:href="@{/ventas/nueva}">Nueva venta</a>
-        </li>
-        <li class="nav-item" sec:authorize="hasRole('GERENTE')">
-          <a class="nav-link" th:href="@{/reportes/ventas}">Reportes</a>
-        </li>
+    <form class="buscador" role="search" th:action="@{/catalogo}" method="get">
+      <svg th:replace="~{fragments/iconos :: icono('search', 'icon-sm buscador-icono')}"></svg>
+      <label class="visually-hidden" for="busquedaNav">Buscar en el catálogo</label>
+      <input type="search" id="busquedaNav" name="q" th:value="${q}" placeholder="Buscar zapatos, marcas..." autocomplete="off">
+    </form>
 
-        <!-- Cliente -->
-        <li class="nav-item" sec:authorize="hasRole('CLIENTE')">
-          <a class="nav-link d-flex align-items-center gap-1" th:href="@{/carrito}">
-            Carrito
-            <span class="badge-cart" th:text="${@carrito.unidades}">0</span>
-          </a>
-        </li>
-        <li class="nav-item" sec:authorize="hasRole('CLIENTE')">
-          <a class="nav-link" th:href="@{/mis-pedidos}">Mis pedidos</a>
-        </li>
-      </ul>
+    <div class="barra-acciones">
+      <a class="accion-icono" th:href="@{/carrito}" sec:authorize="!hasAnyRole('ADMINISTRADOR','GERENTE','VENDEDOR','ALMACENISTA')"
+         aria-label="Carrito de compras">
+        <svg th:replace="~{fragments/iconos :: icono('cart', 'icon')}"></svg>
+        <span class="contador-carrito" th:text="${@carrito.unidades}">0</span>
+      </a>
 
-      <div class="d-flex align-items-center gap-2">
+      <th:block sec:authorize="isAnonymous()">
+        <a class="btn btn-outline btn-sm d-none d-lg-inline-flex" th:href="@{/login}">
+          <svg th:replace="~{fragments/iconos :: icono('user', 'icon-sm')}"></svg>
+          Ingresar
+        </a>
+      </th:block>
+
+      <th:block sec:authorize="isAuthenticated()">
+        <div class="dropdown d-none d-lg-block">
+          <button class="btn btn-outline btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg th:replace="~{fragments/iconos :: icono('user', 'icon-sm')}"></svg>
+            <span class="nombre-usuario" sec:authentication="name">usuario</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end menu-cuenta">
+            <li sec:authorize="hasRole('CLIENTE')">
+              <a class="dropdown-item" th:href="@{/mis-pedidos}">
+                <svg th:replace="~{fragments/iconos :: icono('package-check', 'icon-sm')}"></svg> Mis pedidos
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form th:action="@{/logout}" method="post" class="m-0">
+                <button class="dropdown-item" type="submit">
+                  <svg th:replace="~{fragments/iconos :: icono('log-out', 'icon-sm')}"></svg> Cerrar sesión
+                </button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </th:block>
+
+      <button class="boton-menu d-lg-none" type="button" id="botonMenu" aria-controls="menuMovil" aria-expanded="false" aria-label="Abrir menú">
+        <svg th:replace="~{fragments/iconos :: icono('menu', 'icon')}"></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MENÚ MÓVIL -->
+  <div class="menu-movil" id="menuMovil" hidden>
+    <div class="container">
+      <form class="buscador buscador-movil" role="search" th:action="@{/catalogo}" method="get">
+        <svg th:replace="~{fragments/iconos :: icono('search', 'icon-sm buscador-icono')}"></svg>
+        <label class="visually-hidden" for="busquedaMovil">Buscar en el catálogo</label>
+        <input type="search" id="busquedaMovil" name="q" th:value="${q}" placeholder="Buscar zapatos, marcas..." autocomplete="off">
+      </form>
+
+      <nav class="menu-movil-nav" aria-label="Navegación móvil">
+        <a th:href="@{/}" th:classappend="${rutaActual == '/'} ? ' active'">
+          <svg th:replace="~{fragments/iconos :: icono('house', 'icon-sm')}"></svg> Inicio
+        </a>
+        <a th:href="@{/catalogo}" th:classappend="${rutaActual == '/catalogo' or #strings.startsWith(rutaActual, '/zapatos')} ? ' active'">
+          <svg th:replace="~{fragments/iconos :: icono('grid', 'icon-sm')}"></svg> Catálogo
+        </a>
+        <a th:href="@{/carrito}" sec:authorize="hasRole('CLIENTE')">
+          <svg th:replace="~{fragments/iconos :: icono('cart', 'icon-sm')}"></svg> Mi carrito
+          <span class="contador-carrito" th:text="${@carrito.unidades}">0</span>
+        </a>
+        <a th:href="@{/mis-pedidos}" sec:authorize="hasRole('CLIENTE')">
+          <svg th:replace="~{fragments/iconos :: icono('package-check', 'icon-sm')}"></svg> Mis pedidos
+        </a>
+
+        <span class="menu-etiqueta" sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','VENDEDOR','ALMACENISTA')">Gestión</span>
+        <a th:href="@{/admin/usuarios}" sec:authorize="hasRole('ADMINISTRADOR')">
+          <svg th:replace="~{fragments/iconos :: icono('user', 'icon-sm')}"></svg> Usuarios
+        </a>
+        <a th:href="@{/almacen/zapatos}" sec:authorize="hasAnyRole('ADMINISTRADOR','ALMACENISTA')">
+          <svg th:replace="~{fragments/iconos :: icono('shoe', 'icon-sm')}"></svg> Zapatos
+        </a>
+        <a th:href="@{/almacen/inventario}" sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','ALMACENISTA')">
+          <svg th:replace="~{fragments/iconos :: icono('package', 'icon-sm')}"></svg> Inventario
+        </a>
+        <a th:href="@{/gestion/pedidos}" sec:authorize="hasAnyRole('ADMINISTRADOR','GERENTE','VENDEDOR','ALMACENISTA')">
+          <svg th:replace="~{fragments/iconos :: icono('package-check', 'icon-sm')}"></svg> Pedidos
+        </a>
+        <a th:href="@{/ventas/nueva}" sec:authorize="hasRole('VENDEDOR')">
+          <svg th:replace="~{fragments/iconos :: icono('plus', 'icon-sm')}"></svg> Nueva venta
+        </a>
+        <a th:href="@{/reportes/ventas}" sec:authorize="hasRole('GERENTE')">
+          <svg th:replace="~{fragments/iconos :: icono('tag', 'icon-sm')}"></svg> Reportes
+        </a>
+      </nav>
+
+      <div class="menu-movil-cuenta">
         <th:block sec:authorize="isAnonymous()">
-          <a class="btn btn-outline-blue btn-sm" th:href="@{/login}">Ingresar</a>
-          <a class="btn btn-brand btn-sm" th:href="@{/registro}">Crear cuenta</a>
+          <a class="btn btn-outline w-100" th:href="@{/login}">
+            <svg th:replace="~{fragments/iconos :: icono('user', 'icon-sm')}"></svg> Iniciar sesión
+          </a>
+          <a class="btn btn-brand w-100" th:href="@{/registro}">Crear cuenta</a>
         </th:block>
-
         <th:block sec:authorize="isAuthenticated()">
-          <div class="user-menu d-none d-lg-flex">
-            <span class="user-name" sec:authentication="name">usuario</span>
-          </div>
-          <form th:action="@{/logout}" method="post" class="m-0">
-            <button class="btn btn-outline-blue btn-sm" type="submit">Salir</button>
+          <span class="menu-usuario" sec:authentication="name">usuario</span>
+          <form th:action="@{/logout}" method="post" class="w-100">
+            <button class="btn btn-outline w-100" type="submit">
+              <svg th:replace="~{fragments/iconos :: icono('log-out', 'icon-sm')}"></svg> Cerrar sesión
+            </button>
           </form>
         </th:block>
       </div>
     </div>
   </div>
-</nav>
+</header>
 
 <!-- ===== ALERTAS GLOBALES ===== -->
-<div th:fragment="alertas" class="container" style="z-index: 100; position: relative;">
-  <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${mensaje}">
+<div th:fragment="alertas" class="container alertas-globales">
+  <div class="alert alert-exito alert-dismissible fade show" role="alert" th:if="${mensaje}">
+    <svg th:replace="~{fragments/iconos :: icono('check-circle', 'icon')}"></svg>
     <div th:text="${mensaje}"></div>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
   </div>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error}">
+  <div class="alert alert-error alert-dismissible fade show" role="alert" th:if="${error}">
+    <svg th:replace="~{fragments/iconos :: icono('alert-circle', 'icon')}"></svg>
     <div th:text="${error}"></div>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
   </div>
 </div>
 
 <!-- ===== BADGE DE ESTADO DE PEDIDO ===== -->
-<span th:fragment="estado(e)" class="badge"
-      th:classappend="${e.name() == 'PENDIENTE'} ? 'badge-warning' : (${e.name() == 'CANCELADO'} ? 'badge-danger' : (${e.name() == 'ENTREGADO'} ? 'badge-success' : 'badge-primary'))"
-      th:text="${e}">PENDIENTE</span>
+<span th:fragment="estado(e)" class="badge-estado"
+      th:classappend="' estado-' + ${#strings.toLowerCase(e.name())}">
+  <span class="estado-punto" aria-hidden="true"></span>
+  <span th:text="${e}">PENDIENTE</span>
+</span>
 
-<!-- ===== FRAGMENTO DE IMAGEN DE ZAPATO ===== -->
-<img th:fragment="foto(z, clase)" th:class="${clase}" loading="lazy"
-     th:with="fotos=${ {'Deportivo':'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
-                         'Casual':'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80',
-                         'Formal':'https://images.unsplash.com/photo-1614252369475-531eba835eb1?auto=format&fit=crop&w=800&q=80',
-                         'Bota':'https://images.unsplash.com/photo-1575987116913-e96e7d490b8a?auto=format&fit=crop&w=800&q=80',
-                         'Sandalia':'https://images.unsplash.com/photo-1732708862549-714f7478ca31?auto=format&fit=crop&w=800&q=80'} }"
-     th:src="${z.imagen} ?: (${fotos[z.categoria]} ?: @{/img/zapato.svg})" th:alt="${z.nombre}">
+<!-- ===== IMAGEN DE PRODUCTO CON FALLBACK LOCAL ===== -->
+<img th:fragment="foto(z, clase)" th:class="${clase}" loading="lazy" decoding="async"
+     th:with="fotos=${ {'Deportivo':'/img/categorias/deportivo.jpg',
+                         'Casual':'/img/categorias/casual.jpg',
+                         'Formal':'/img/categorias/formal.jpg',
+                         'Bota':'/img/categorias/bota.jpg',
+                         'Sandalia':'/img/categorias/sandalia.jpg'} }"
+     th:src="${!#strings.isEmpty(z.imagen)} ? ${z.imagen} : (${fotos[z.categoria]} ?: @{/img/zapato.svg})"
+     th:alt="${z.nombre} + ' · ' + ${z.marca}"
+     th:attr="data-fallback=@{/img/zapato.svg}"
+     onerror="this.onerror=null;this.src=this.dataset.fallback;this.classList.add('img-fallback');">
 
-<!-- ===== PIE DE PÁGINA (SOLO EN HOME) ===== -->
+<!-- ===== PIE DE PÁGINA ===== -->
 <footer th:fragment="pie" class="pie" role="contentinfo">
   <div class="container">
     <div class="pie-grid">
-      <div class="pie-col">
-        <div class="pie-brand">👟 STEP</div>
-        <p class="pie-text">Calzado con personalidad para cada paso. Diseño, comodidad y estilo en una sola tienda.</p>
+      <div class="pie-marca">
+        <a class="marca marca-pie" th:href="@{/}" aria-label="STEP Calzado - Inicio">
+          <span class="marca-monograma" aria-hidden="true">S</span>
+          <span class="marca-texto">STEP<small>calzado</small></span>
+        </a>
+        <p>Calzado con personalidad para cada paso. Diseño, comodidad y estilo en una sola tienda.</p>
+        <span class="pie-sello">
+          <svg th:replace="~{fragments/iconos :: icono('shield-check', 'icon-sm')}"></svg>
+          Compra segura
+        </span>
       </div>
 
       <div class="pie-col">
-        <h3 class="pie-title">Comprar</h3>
+        <h3 class="pie-title">Tienda</h3>
         <ul class="pie-links">
           <li><a th:href="@{/catalogo}">Ver catálogo</a></li>
           <li><a th:href="@{/catalogo(categoria=Deportivo)}">Deportivos</a></li>
           <li><a th:href="@{/catalogo(categoria=Casual)}">Casuales</a></li>
           <li><a th:href="@{/catalogo(categoria=Formal)}">Formales</a></li>
           <li><a th:href="@{/catalogo(categoria=Bota)}">Botas</a></li>
+          <li><a th:href="@{/catalogo(categoria=Sandalia)}">Sandalias</a></li>
         </ul>
       </div>
 
       <div class="pie-col">
-        <h3 class="pie-title">Ayuda</h3>
+        <h3 class="pie-title">Tu cuenta</h3>
         <ul class="pie-links">
-          <li><a th:href="@{/login}">Mi cuenta</a></li>
-          <li><a th:href="@{/registro}">Crear cuenta</a></li>
-          <li><a href="#faq">Preguntas frecuentes</a></li>
-          <li><a href="#envios">Envíos y devoluciones</a></li>
-          <li><a href="#contacto">Contacto</a></li>
+          <li sec:authorize="isAnonymous()"><a th:href="@{/login}">Iniciar sesión</a></li>
+          <li sec:authorize="isAnonymous()"><a th:href="@{/registro}">Crear cuenta</a></li>
+          <li sec:authorize="hasRole('CLIENTE')"><a th:href="@{/carrito}">Mi carrito</a></li>
+          <li sec:authorize="hasRole('CLIENTE')"><a th:href="@{/mis-pedidos}">Mis pedidos</a></li>
+          <li><a th:href="@{/catalogo}">Buscar mi talla</a></li>
         </ul>
       </div>
 
       <div class="pie-col">
-        <h3 class="pie-title">Pagos aceptados</h3>
-        <ul class="pie-links">
-          <li>💳 Tarjeta de crédito/débito</li>
-          <li>🏦 Transferencia bancaria</li>
-          <li>💵 Efectivo (pago contra entrega)</li>
-          <li>📱 Nequi / Daviplata</li>
+        <h3 class="pie-title">Compra con confianza</h3>
+        <ul class="pie-beneficios">
+          <li>
+            <svg th:replace="~{fragments/iconos :: icono('truck', 'icon-sm')}"></svg>
+            <span>Envío gratis desde $150.000</span>
+          </li>
+          <li>
+            <svg th:replace="~{fragments/iconos :: icono('refresh', 'icon-sm')}"></svg>
+            <span>Cambios fáciles y sin costo</span>
+          </li>
+          <li>
+            <svg th:replace="~{fragments/iconos :: icono('credit-card', 'icon-sm')}"></svg>
+            <span>Tarjeta, transferencia o contra entrega</span>
+          </li>
+          <li>
+            <svg th:replace="~{fragments/iconos :: icono('map-pin', 'icon-sm')}"></svg>
+            <span>Envíos a todo Colombia</span>
+          </li>
         </ul>
       </div>
     </div>
 
     <div class="pie-bottom">
-      <p class="mb-0">© 2025 STEP · Proyecto académico UTS · Todos los derechos reservados · Datos ficticios con fines educativos</p>
+      <p>© 2026 STEP Calzado · Proyecto académico UTS · Datos ficticios con fines educativos</p>
+      <p class="pie-pagos">Pagos: Tarjeta · Transferencia · Contra entrega</p>
     </div>
   </div>
 </footer>
 
-<!-- ===== SCRIPTS DE BOOTSTRAP ===== -->
+<!-- ===== SCRIPTS ===== -->
 <th:block th:fragment="scripts">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Auto-dismiss alerts after 5 seconds
-    document.addEventListener('DOMContentLoaded', function() {
-      const alerts = document.querySelectorAll('.alert-dismissible');
-      alerts.forEach(function(alert) {
-        setTimeout(function() {
-          const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
-          bsAlert.close();
-        }, 5000);
-      });
-    });
-
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-  </script>
+  <th:block th:replace="~{fragments/iconos :: sprite}"></th:block>
+  <script th:src="@{/vendor/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/js/app.js}"></script>
 </th:block>
 
 </body>

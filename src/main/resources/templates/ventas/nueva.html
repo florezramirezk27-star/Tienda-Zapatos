@@ -3,53 +3,110 @@
 <head th:replace="~{fragments/layout :: head('Nueva venta')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
-<main class="container py-4">
-  <div th:replace="~{fragments/layout :: alertas}"></div>
-  <h1 class="h3 mb-3">Registrar venta presencial</h1>
 
-  <form class="card card-body shadow-sm" th:action="@{/ventas}" method="post">
-    <h2 class="h6">Productos</h2>
-    <div id="lineas"></div>
-    <div class="mb-3">
-      <button type="button" class="btn btn-outline-secondary btn-sm" id="agregar">+ Agregar otro producto</button>
-    </div>
+<main class="page-shell" id="main-content">
+  <div class="container">
+    <div th:replace="~{fragments/layout :: alertas}"></div>
 
-    <div class="row g-3">
-      <div class="col-md-6">
-        <!-- REQ-ZAP-027: sin correo, la venta queda como «Cliente de mostrador» -->
-        <label class="form-label" for="clienteCorreo">Correo del cliente (opcional)</label>
-        <input class="form-control" type="email" id="clienteCorreo" name="clienteCorreo" placeholder="Vacío = Cliente de mostrador">
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Ventas</p>
+        <h1>Registrar venta presencial</h1>
+        <p>Selecciona los productos y el método de pago para registrar la venta.</p>
       </div>
-      <div class="col-md-6">
-        <label class="form-label" for="metodoPago">Método de pago</label>
-        <select class="form-select" id="metodoPago" name="metodoPago" required>
-          <option th:each="m : ${metodos}" th:value="${m}" th:text="${m.etiqueta}"></option>
-        </select>
-      </div>
-    </div>
-    <div class="mt-3">
-      <button class="btn btn-dark" type="submit">Registrar venta</button>
-      <a class="btn btn-link" th:href="@{/gestion/pedidos}">Cancelar</a>
-    </div>
-  </form>
+      <a class="btn btn-outline" th:href="@{/gestion/pedidos}">
+        <svg th:replace="~{fragments/iconos :: icono('arrow-left', 'icon')}"></svg>
+        Volver a pedidos
+      </a>
+    </header>
 
-  <template id="fila">
-    <div class="row g-2 mb-2 linea">
-      <div class="col-8">
-        <select name="tallaId" class="form-select" required aria-label="Zapato y talla">
-          <option th:each="t : ${tallas}" th:value="${t.id}"
-                  th:text="${t.zapato.nombre} + ' · talla ' + ${t.talla} + ' · stock ' + ${t.stock}"></option>
-        </select>
+    <form th:action="@{/ventas}" method="post">
+      <section class="panel" aria-labelledby="productos-title">
+        <div class="panel-head">
+          <h2 id="productos-title">Productos</h2>
+          <span class="text-muted small">El stock mostrado es el disponible actual.</span>
+        </div>
+        <div class="panel-body">
+          <div id="lineas">
+            <div class="row g-2 mb-2 linea">
+              <div class="col-8">
+                <label class="visually-hidden" for="tallaInicial">Zapato y talla</label>
+                <select name="tallaId" id="tallaInicial" class="form-select" required aria-label="Zapato y talla">
+                  <option th:each="t : ${tallas}" th:value="${t.id}"
+                          th:text="${t.zapato.nombre + ' · talla ' + t.talla + ' · stock ' + t.stock}"></option>
+                </select>
+              </div>
+              <div class="col-3">
+                <label class="visually-hidden" for="cantidadInicial">Cantidad</label>
+                <input type="number" name="cantidad" min="1" value="1" class="form-control" required id="cantidadInicial" aria-label="Cantidad">
+              </div>
+              <div class="col-1">
+                <button type="button" class="btn btn-outline-danger quitar" aria-label="Quitar producto">
+                  <svg th:replace="~{fragments/iconos :: icono('x', 'icon-sm')}"></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-outline btn-sm" id="agregar">
+            <svg th:replace="~{fragments/iconos :: icono('plus', 'icon-sm')}"></svg>
+            Agregar otro producto
+          </button>
+        </div>
+      </section>
+
+      <section class="panel mt-4" aria-labelledby="pago-title">
+        <div class="panel-head">
+          <h2 id="pago-title">Cliente y pago</h2>
+        </div>
+        <div class="panel-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <!-- REQ-ZAP-027: sin correo, la venta queda como «Cliente de mostrador» -->
+              <label class="form-label" for="clienteCorreo">Correo del cliente (opcional)</label>
+              <input class="form-control" type="email" id="clienteCorreo" name="clienteCorreo" placeholder="Vacío = Cliente de mostrador">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="metodoPago">Método de pago</label>
+              <select class="form-select" id="metodoPago" name="metodoPago" required>
+                <option th:each="m : ${metodos}" th:value="${m}" th:text="${m.etiqueta}"></option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="d-flex flex-wrap gap-2 mt-4">
+        <button class="btn btn-brand btn-lg" type="submit">
+          <svg th:replace="~{fragments/iconos :: icono('check', 'icon')}"></svg>
+          Registrar venta
+        </button>
+        <a class="btn btn-outline btn-lg" th:href="@{/gestion/pedidos}">Cancelar</a>
       </div>
-      <div class="col-3">
-        <input type="number" name="cantidad" min="1" value="1" class="form-control" required aria-label="Cantidad">
+    </form>
+
+    <template id="fila">
+      <div class="row g-2 mb-2 linea">
+        <div class="col-8">
+          <select name="tallaId" class="form-select" required aria-label="Zapato y talla">
+            <option th:each="t : ${tallas}" th:value="${t.id}"
+                    th:text="${t.zapato.nombre + ' · talla ' + t.talla + ' · stock ' + t.stock}"></option>
+          </select>
+        </div>
+        <div class="col-3">
+          <input type="number" name="cantidad" min="1" value="1" class="form-control" required aria-label="Cantidad">
+        </div>
+        <div class="col-1">
+          <button type="button" class="btn btn-outline-danger quitar" aria-label="Quitar producto">
+            <svg th:replace="~{fragments/iconos :: icono('x', 'icon-sm')}"></svg>
+          </button>
+        </div>
       </div>
-      <div class="col-1">
-        <button type="button" class="btn btn-outline-danger quitar" aria-label="Quitar">&times;</button>
-      </div>
-    </div>
-  </template>
+    </template>
+  </div>
 </main>
+
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 <script>
   (function () {
@@ -61,7 +118,6 @@
       var boton = e.target.closest('.quitar');
       if (boton && contenedor.children.length > 1) { boton.closest('.linea').remove(); }
     });
-    agregar();
   })();
 </script>
 </body>

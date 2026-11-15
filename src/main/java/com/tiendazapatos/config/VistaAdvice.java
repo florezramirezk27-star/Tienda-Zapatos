@@ -15,4 +15,12 @@ public class VistaAdvice {
     public boolean inicio(HttpServletRequest request) {
         return request.getRequestURI().equals(request.getContextPath() + "/");
     }
+
+    /** Ruta actual sin el context path, para marcar el enlace activo de la navegación. */
+    @ModelAttribute("rutaActual")
+    public String rutaActual(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        String contexto = request.getContextPath();
+        return contexto.isEmpty() ? uri : uri.substring(contexto.length());
+    }
 }

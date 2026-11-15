@@ -3,79 +3,133 @@
 <head th:replace="~{fragments/layout :: head('Inventario')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
-<main class="container py-4">
-  <div th:replace="~{fragments/layout :: alertas}"></div>
-  <h1 class="h3 mb-3">Inventario por talla</h1>
 
-  <!-- HU-06: solo el almacenista registra movimientos; los demás roles solo consultan -->
-  <form class="card card-body shadow-sm mb-4" sec:authorize="hasRole('ALMACENISTA')"
-        th:action="@{/almacen/inventario/movimiento}" method="post">
-    <div class="row g-2 align-items-end">
-      <div class="col-md-5">
-        <label class="form-label small mb-1" for="tallaId">Zapato y talla</label>
-        <select class="form-select" id="tallaId" name="tallaId" required>
-          <optgroup th:each="z : ${zapatos}" th:label="${z.nombre} + ' (' + ${z.referencia} + ')'">
-            <option th:each="t : ${z.tallas}" th:value="${t.id}" th:text="'Talla ' + ${t.talla} + ' · stock ' + ${t.stock}"></option>
-          </optgroup>
-        </select>
+<main class="page-shell" id="main-content">
+  <div class="container">
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Almacén</p>
+        <h1>Inventario por talla</h1>
+        <p>Consulta el stock de cada talla y registra entradas o ajustes.</p>
       </div>
-      <div class="col-md-3">
-        <label class="form-label small mb-1" for="tipo">Tipo</label>
-        <select class="form-select" id="tipo" name="tipo">
-          <option value="ENTRADA">Entrada de mercancía</option>
-          <option value="AJUSTE">Ajuste (puede ser negativo)</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <label class="form-label small mb-1" for="cantidad">Cantidad</label>
-        <input class="form-control" type="number" id="cantidad" name="cantidad" required>
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-dark w-100" type="submit">Registrar</button>
-      </div>
+      <a class="btn btn-outline" th:href="@{/almacen/zapatos}">
+        <svg th:replace="~{fragments/iconos :: icono('shoe', 'icon')}"></svg>
+        Ver zapatos
+      </a>
+    </header>
+
+    <div class="alert alert-info" sec:authorize="!hasRole('ALMACENISTA')" role="status">
+      <svg th:replace="~{fragments/iconos :: icono('info', 'icon')}"></svg>
+      <div>Solo el almacenista puede registrar movimientos. Tu cuenta puede consultar el inventario.</div>
     </div>
-  </form>
 
-  <div class="table-responsive mb-4">
-    <table class="table table-sm table-bordered bg-white shadow-sm tabla-stock">
-      <thead class="table-light">
-        <tr>
-          <th class="text-start">Zapato</th>
-          <th th:each="t : ${#numbers.sequence(34, 45)}" th:text="${t}">34</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="z : ${zapatos}" th:classappend="${!z.activo} ? 'text-muted'">
-          <td class="text-start" th:text="${z.nombre}">Zapato</td>
-          <td th:each="t : ${z.tallas}" th:text="${t.stock}" th:classappend="${t.agotada} ? 'stock-cero'">0</td>
-          <td class="fw-bold" th:text="${z.stockTotal}">0</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- HU-06: solo el almacenista registra movimientos; los demás roles solo consultan -->
+    <section class="panel mb-4" sec:authorize="hasRole('ALMACENISTA')" aria-labelledby="movimiento-title">
+      <div class="panel-head">
+        <h2 id="movimiento-title">Registrar movimiento</h2>
+        <span class="badge badge-secondary">Entrada o ajuste</span>
+      </div>
+      <div class="panel-body">
+        <form th:action="@{/almacen/inventario/movimiento}" method="post">
+          <div class="row g-3 align-items-end">
+            <div class="col-lg-5">
+              <label class="form-label" for="tallaId">Zapato y talla</label>
+              <select class="form-select" id="tallaId" name="tallaId" required>
+                <optgroup th:each="z : ${zapatos}" th:label="${z.nombre + ' (' + z.referencia + ')'}">
+                  <option th:each="t : ${z.tallas}" th:value="${t.id}" th:text="${'Talla ' + t.talla + ' · stock ' + t.stock}"></option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="col-lg-3 col-md-6">
+              <label class="form-label" for="tipo">Tipo</label>
+              <select class="form-select" id="tipo" name="tipo">
+                <option value="ENTRADA">Entrada de mercancía</option>
+                <option value="AJUSTE">Ajuste (puede ser negativo)</option>
+              </select>
+            </div>
+            <div class="col-lg-2 col-md-6">
+              <label class="form-label" for="cantidad">Cantidad</label>
+              <input class="form-control" type="number" id="cantidad" name="cantidad" required>
+            </div>
+            <div class="col-lg-2">
+              <button class="btn btn-brand w-100" type="submit">
+                <svg th:replace="~{fragments/iconos :: icono('plus', 'icon-sm')}"></svg>
+                Registrar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
 
-  <h2 class="h5">Últimos movimientos</h2>
-  <div class="table-responsive">
-    <table class="table table-sm bg-white shadow-sm">
-      <thead class="table-light">
-        <tr><th>Fecha</th><th>Tipo</th><th>Zapato</th><th class="text-center">Talla</th><th class="text-center">Cantidad</th><th>Usuario</th><th>Pedido</th></tr>
-      </thead>
-      <tbody>
-        <tr th:each="m : ${movimientos}">
-          <td th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
-          <td th:text="${m.tipo.etiqueta}">Tipo</td>
-          <td th:text="${m.tallaStock.zapato.nombre}">Zapato</td>
-          <td class="text-center" th:text="${m.tallaStock.talla}">40</td>
-          <td class="text-center" th:text="${m.cantidad}">1</td>
-          <td th:text="${m.usuario.nombre}">Usuario</td>
-          <td th:text="${m.referencia}">—</td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(movimientos)}"><td colspan="7" class="text-center text-muted">Sin movimientos todavía</td></tr>
-      </tbody>
-    </table>
+    <section class="panel mb-4" aria-labelledby="stock-title">
+      <div class="panel-head">
+        <h2 id="stock-title">Stock por talla</h2>
+        <span class="text-muted small">Tallas 34 a 45</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm tabla-stock align-middle">
+          <thead>
+            <tr>
+              <th class="text-start">Zapato</th>
+              <th th:each="t : ${#numbers.sequence(34, 45)}" th:text="${t}">34</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="z : ${zapatos}" th:classappend="${!z.activo} ? 'text-muted'">
+              <td class="text-start">
+                <span th:text="${z.nombre}">Zapato</span>
+                <small class="d-block text-muted" th:text="${z.referencia}">ZAP-0</small>
+              </td>
+              <td th:each="t : ${z.tallas}" th:text="${t.stock}" th:classappend="${t.agotada} ? 'stock-cero'">0</td>
+              <td class="fw-bold" th:text="${z.stockTotal}">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="movimientos-title">
+      <div class="panel-head">
+        <h2 id="movimientos-title">Últimos movimientos</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Zapato</th>
+              <th class="text-center">Talla</th>
+              <th class="text-center">Cantidad</th>
+              <th>Usuario</th>
+              <th>Pedido</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="m : ${movimientos}">
+              <td th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
+              <td th:text="${m.tipo.etiqueta}">Tipo</td>
+              <td th:text="${m.tallaStock.zapato.nombre}">Zapato</td>
+              <td class="text-center" th:text="${m.tallaStock.talla}">40</td>
+              <td class="text-center" th:text="${m.cantidad}">1</td>
+              <td th:text="${m.usuario.nombre}">Usuario</td>
+              <td th:text="${m.referencia}">Sin pedido</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(movimientos)}">
+              <td colspan="7" class="text-center text-muted py-4">Sin movimientos todavía.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 </main>
+
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

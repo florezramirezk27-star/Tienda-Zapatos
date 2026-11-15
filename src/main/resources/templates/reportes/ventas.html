@@ -3,27 +3,53 @@
 <head th:replace="~{fragments/layout :: head('Reporte de ventas')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
-<main class="container py-4">
-  <div th:replace="~{fragments/layout :: alertas}"></div>
-  <h1 class="h3 mb-3">Reporte de ventas</h1>
 
-  <form class="card card-body shadow-sm" style="max-width: 560px" method="get" th:action="@{/reportes/ventas/pdf}">
-    <p class="small text-muted">El reporte cuenta los pedidos confirmados, enviados y entregados del rango. Los pendientes y cancelados no se incluyen.</p>
-    <div class="row g-3">
-      <div class="col-sm-6">
-        <label class="form-label" for="desde">Desde</label>
-        <input class="form-control" type="date" id="desde" name="desde" th:value="${desde}" required>
+<main class="page-shell" id="main-content">
+  <div class="container">
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Reportes</p>
+        <h1>Reporte de ventas</h1>
+        <p>Genera un PDF con las ventas confirmadas, enviadas y entregadas de un rango de fechas.</p>
       </div>
-      <div class="col-sm-6">
-        <label class="form-label" for="hasta">Hasta</label>
-        <input class="form-control" type="date" id="hasta" name="hasta" th:value="${hasta}" required>
+      <a class="btn btn-outline" th:href="@{/gestion/pedidos}">
+        <svg th:replace="~{fragments/iconos :: icono('package-check', 'icon')}"></svg>
+        Ver pedidos
+      </a>
+    </header>
+
+    <section class="panel" style="max-width: 680px;" aria-labelledby="reporte-form-title">
+      <div class="panel-head">
+        <h2 id="reporte-form-title">Rango de fechas</h2>
+        <span class="badge badge-secondary">PDF</span>
       </div>
-    </div>
-    <div class="mt-3">
-      <button class="btn btn-dark" type="submit">Generar PDF</button>
-    </div>
-  </form>
+      <div class="panel-body">
+        <p class="text-muted small">El reporte cuenta los pedidos confirmados, enviados y entregados del rango. Los pendientes y cancelados no se incluyen.</p>
+
+        <form method="get" th:action="@{/reportes/ventas/pdf}">
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="desde">Desde</label>
+              <input class="form-control" type="date" id="desde" name="desde" th:value="${desde}" required>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="hasta">Hasta</label>
+              <input class="form-control" type="date" id="hasta" name="hasta" th:value="${hasta}" required>
+            </div>
+          </div>
+          <button class="btn btn-brand mt-4" type="submit">
+            <svg th:replace="~{fragments/iconos :: icono('download', 'icon')}"></svg>
+            Generar PDF
+          </button>
+        </form>
+      </div>
+    </section>
+  </div>
 </main>
+
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

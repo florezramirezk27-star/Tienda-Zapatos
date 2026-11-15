@@ -1,6 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Zapato sin imagen">
-  <rect width="400" height="300" fill="#e9ecef"/>
-  <path d="M70 190c0-22 10-40 28-40 22 0 30 18 52 18 26 0 30-20 58-20 34 0 70 18 100 40 12 9 12 22-4 22H84c-8 0-14-6-14-20z"
-        fill="#adb5bd"/>
-  <rect x="70" y="212" width="256" height="14" rx="7" fill="#6c757d"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Imagen de producto no disponible">
+  <rect width="800" height="800" fill="#F3F2EE"/>
+  <circle cx="400" cy="365" r="235" fill="#E9EAE7"/>
+  <path d="M205 480c58 10 117 2 168-30 22-14 44-34 75-34 48 0 84 33 124 44 25 7 40 18 40 40v12c0 18-14 32-32 32H237c-18 0-32-14-32-32z"
+        fill="none" stroke="#172A3A" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M238 450c14-46 49-78 92-96" fill="none" stroke="#172A3A" stroke-width="12" stroke-linecap="round"/>
+  <path d="M275 405v-46c0-13 10-23 23-23h22" fill="none" stroke="#172A3A" stroke-width="12" stroke-linecap="round"/>
+  <path d="M245 520h340" stroke="#D97745" stroke-width="16" stroke-linecap="round"/>
+  <text x="400" y="640" text-anchor="middle" font-family="DM Sans, Segoe UI, Arial, sans-serif" font-size="20" font-weight="600" letter-spacing="7" fill="#777777">STEP</text>
+  <text x="400" y="668" text-anchor="middle" font-family="DM Sans, Segoe UI, Arial, sans-serif" font-size="13" letter-spacing="1.5" fill="#9A9A96">Imagen no disponible</text>
 </svg>
