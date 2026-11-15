@@ -4,34 +4,104 @@
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-<main class="checkout-page">
+<main class="checkout-page" id="main-content">
   <div class="container">
     <div th:replace="~{fragments/layout :: alertas}"></div>
 
-    <header class="mb-5">
-      <h1 class="display-title" style="font-size: var(--fs-h1); font-weight: 800;">Confirmar pedido</h1>
-      <p class="text-muted" style="font-size: var(--fs-body-lg);">Revisa tu pedido y completa los datos de entrega</p>
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Último paso</p>
+        <h1 class="display-title">Confirmar pedido</h1>
+        <p>Revisa tu selección y completa los datos de entrega.</p>
+      </div>
+      <a class="btn btn-outline" th:href="@{/carrito}">
+        <svg th:replace="~{fragments/iconos :: icono('arrow-left', 'icon')}"></svg>
+        Volver al carrito
+      </a>
     </header>
 
-    <div class="alert alert-info text-center" th:if="${carrito.vacio}" role="status">
-      Tu carrito está vacío. <a class="fw-bold" th:href="@{/catalogo}">Ver el catálogo</a>
+    <div class="checkout-steps" aria-label="Progreso de la compra">
+      <span class="paso">
+        <span class="paso-num">1</span> Carrito
+      </span>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="paso activo" aria-current="step">
+        <span class="paso-num">2</span> Entrega y pago
+      </span>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="paso">
+        <span class="paso-num">3</span> Confirmación
+      </span>
+    </div>
+
+    <!-- CARRITO VACÍO -->
+    <div class="cart-empty" th:if="${carrito.vacio}" role="status">
+      <div class="cart-empty-icon" aria-hidden="true">
+        <svg th:replace="~{fragments/iconos :: icono('cart', 'icon')}"></svg>
+      </div>
+      <h2 class="cart-empty-title">No hay productos para confirmar</h2>
+      <p class="cart-empty-text">Tu carrito está vacío. Agrega un par desde el catálogo para iniciar un pedido.</p>
+      <a class="btn btn-brand btn-lg" th:href="@{/catalogo}">Ver el catálogo</a>
     </div>
 
     <div class="checkout-grid" th:unless="${carrito.vacio}">
+      <!-- FORMULARIO DE ENTREGA Y PAGO -->
+      <section class="checkout-form-card" aria-labelledby="checkout-form-title">
+        <h2 id="checkout-form-title" class="checkout-form-title">Datos de entrega y pago</h2>
+
+        <form th:action="@{/pedidos/confirmar}" method="post" novalidate>
+          <fieldset class="checkout-fieldset">
+            <legend class="checkout-legend">
+              <svg th:replace="~{fragments/iconos :: icono('map-pin', 'icon')}"></svg>
+              Dirección de entrega
+            </legend>
+
+            <label class="form-label" for="direccion">Dirección completa <span class="text-orange">*</span></label>
+            <textarea class="form-control" id="direccion" name="direccion" rows="3" maxlength="250" required
+                      placeholder="Calle 123 #45-67, barrio, ciudad, departamento"></textarea>
+            <div class="form-text">Incluye referencias, apartamento o casa y código postal si lo tienes.</div>
+          </fieldset>
+
+          <fieldset class="checkout-fieldset">
+            <legend class="checkout-legend">
+              <svg th:replace="~{fragments/iconos :: icono('credit-card', 'icon')}"></svg>
+              Método de pago
+            </legend>
+
+            <div class="metodos-pago">
+              <label class="metodo-pago" th:each="m : ${metodos}">
+                <input type="radio" name="metodoPago" th:value="${m}" required>
+                <svg th:replace="~{fragments/iconos :: icono(${m.name() == 'CONTRA_ENTREGA' ? 'truck' : 'credit-card'}, 'icon')}"></svg>
+                <span>
+                  <strong th:text="${m.etiqueta}">Método</strong>
+                  <small th:if="${m.name() == 'CONTRA_ENTREGA'}">Pagas cuando recibes el pedido.</small>
+                  <small th:unless="${m.name() == 'CONTRA_ENTREGA'}">El pago se registra por transferencia.</small>
+                </span>
+              </label>
+            </div>
+            <div class="form-text">No hay pasarela de pagos: el método elegido queda registrado en el pedido.</div>
+          </fieldset>
+
+          <button class="btn btn-brand btn-lg" type="submit">
+            <svg th:replace="~{fragments/iconos :: icono('check', 'icon')}"></svg>
+            Confirmar pedido
+          </button>
+        </form>
+      </section>
+
       <!-- RESUMEN DEL PEDIDO -->
-      <section class="checkout-order" aria-labelledby="order-title">
-        <h2 id="order-title" class="checkout-order-title">Tu pedido</h2>
+      <aside class="checkout-order" aria-labelledby="checkout-order-title">
+        <h2 id="checkout-order-title" class="checkout-order-title">Tu pedido</h2>
 
         <ul class="checkout-items">
           <li class="checkout-item" th:each="i : ${carrito.items}">
-            <img class="checkout-item-img" th:replace="~{fragments/layout :: foto(${i}, 'checkout-item-img')}"
-                 th:alt="${i.nombre}" loading="lazy">
+            <img th:replace="~{fragments/layout :: foto(${i}, 'checkout-item-img')}">
             <div class="checkout-item-info">
               <div class="checkout-item-name" th:text="${i.nombre}">Zapato</div>
               <div class="checkout-item-meta">
                 <span th:text="${i.marca}">Marca</span> ·
-                <span th:text="${i.categoria}">Categoría</span> ·
-                Talla <span th:text="${i.talla}">40</span> ·
+                <span th:text="${i.categoria}">Categoría</span><br>
+                Talla <strong th:text="${i.talla}">40</strong> ·
                 <span th:text="${i.color}">Color</span> ·
                 Cantidad: <span th:text="${i.cantidad}">1</span>
               </div>
@@ -40,59 +110,40 @@
           </li>
         </ul>
 
-        <div class="d-flex justify-content-between mt-3 pt-3 border-top">
-          <span>Subtotal</span>
-          <span class="fw-semibold" th:text="${@dinero.formato(carrito.subtotal)}">$0</span>
-        </div>
-        <div class="d-flex justify-content-between">
-          <span>Envío</span>
-          <span class="fw-semibold" th:text="${carrito.subtotal >= 150000} ? 'Gratis' : '@dinero.formato(12000)'">$12.000</span>
-        </div>
-        <div class="d-flex justify-content-between">
-          <span>IVA (19%)</span>
-          <span th:text="${@dinero.formato(carrito.iva)}">$0</span>
-        </div>
-        <div class="d-flex justify-content-between fw-bold" style="font-size: var(--fs-body-lg);">
-          <span>Total</span>
-          <span class="text-orange" th:text="${@dinero.formato(carrito.total + (carrito.subtotal >= 150000 ? 0 : 12000))}">$0</span>
-        </div>
-      </section>
-
-      <!-- FORMULARIO DE ENTREGA Y PAGO -->
-      <aside class="checkout-form" aria-labelledby="form-title">
-        <h2 id="form-title" class="checkout-form-title">Datos de entrega y pago</h2>
-
-        <form th:action="@{/pedidos/confirmar}" method="post" novalidate>
-          <div class="mb-3">
-            <label class="form-label" for="direccion">Dirección de entrega <span class="text-danger">*</span></label>
-            <textarea class="form-control" id="direccion" name="direccion" rows="3" maxlength="250" required
-                      placeholder="Calle 123 #45-67, Barrio Centro, Ciudad, Departamento"></textarea>
-            <div class="form-text">Incluye referencias, apartamento/casa, código postal si lo tienes.</div>
+        <div class="checkout-totales">
+          <div class="checkout-total-row">
+            <span>Subtotal</span>
+            <strong th:text="${@dinero.formato(carrito.subtotal)}">$0</strong>
           </div>
-
-          <div class="mb-3">
-            <label class="form-label" for="metodoPago">Método de pago <span class="text-danger">*</span></label>
-            <select class="form-select" id="metodoPago" name="metodoPago" required>
-              <option value="" disabled selected>Selecciona un método</option>
-              <option th:each="m : ${metodos}" th:value="${m}" th:text="${m.etiqueta}"></option>
-            </select>
-            <div class="form-text">No hay pasarela de pagos real: el método solo queda registrado en el pedido.</div>
+          <div class="checkout-total-row">
+            <span>Envío</span>
+            <strong th:if="${carrito.envioGratis}">Gratis</strong>
+            <strong th:unless="${carrito.envioGratis}" th:text="${@dinero.formato(carrito.envio)}">$12.000</strong>
           </div>
+          <div class="checkout-total-row">
+            <span>IVA (19%)</span>
+            <strong th:text="${@dinero.formato(carrito.iva)}">$0</strong>
+          </div>
+          <div class="checkout-total-row total">
+            <span>Total</span>
+            <strong th:text="${@dinero.formato(carrito.totalConEnvio)}">$0</strong>
+          </div>
+        </div>
 
-          <button class="btn btn-brand" type="submit">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
-            Confirmar pedido
-          </button>
-
-          <a class="btn btn-link" th:href="@{/carrito}">Volver al carrito</a>
-        </form>
+        <p class="checkout-help">
+          <svg th:replace="~{fragments/iconos :: icono('info', 'icon-sm')}"></svg>
+          Al confirmar, el inventario de cada talla se descuenta de forma definitiva.
+        </p>
+        <p class="checkout-help" th:unless="${carrito.envioGratis}">
+          <svg th:replace="~{fragments/iconos :: icono('truck', 'icon-sm')}"></svg>
+          Envío gratis desde $150.000.
+        </p>
       </aside>
     </div>
   </div>
 </main>
 
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

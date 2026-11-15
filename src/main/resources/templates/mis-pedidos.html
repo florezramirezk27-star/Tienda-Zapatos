@@ -4,59 +4,68 @@
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-<main class="orders-page">
+<main class="orders-page" id="main-content">
   <div class="container">
     <div th:replace="~{fragments/layout :: alertas}"></div>
 
-    <header class="mb-5">
-      <h1 class="display-title" style="font-size: var(--fs-h1); font-weight: 800;">Mis pedidos</h1>
-      <p class="text-muted" style="font-size: var(--fs-body-lg);">Historial y estado de tus compras</p>
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Tu historial</p>
+        <h1 class="display-title">Mis pedidos</h1>
+        <p>Consulta el estado de tus compras y descarga tus facturas.</p>
+      </div>
+      <a class="btn btn-outline" th:href="@{/catalogo}">
+        <svg th:replace="~{fragments/iconos :: icono('arrow-left', 'icon')}"></svg>
+        Seguir comprando
+      </a>
     </header>
 
     <!-- SIN PEDIDOS -->
     <div class="orders-empty" th:if="${#lists.isEmpty(pedidos)}" role="status">
-      <div class="cart-empty-icon" aria-hidden="true">📦</div>
+      <div class="cart-empty-icon" aria-hidden="true">
+        <svg th:replace="~{fragments/iconos :: icono('package', 'icon')}"></svg>
+      </div>
       <h2 class="cart-empty-title">Aún no tienes pedidos</h2>
-      <p class="cart-empty-text">Cuando realices tu primera compra, aparecerá aquí con su estado y detalles.</p>
-      <a class="btn btn-brand btn-lg" th:href="@{/catalogo}">Explorar catálogo</a>
+      <p class="cart-empty-text">Cuando realices tu primera compra, aparecerá aquí con su estado, productos y factura.</p>
+      <a class="btn btn-brand btn-lg" th:href="@{/catalogo}">Explorar el catálogo</a>
     </div>
 
     <!-- LISTA DE PEDIDOS -->
-    <div class="orders-table" th:unless="${#lists.isEmpty(pedidos)}">
-      <table class="table mb-0" role="grid" aria-label="Lista de pedidos">
-        <thead>
-          <tr>
-            <th scope="col">Pedido</th>
-            <th scope="col">Fecha</th>
-            <th scope="col">Estado</th>
-            <th scope="col" class="text-center">Items</th>
-            <th scope="col" class="text-end">Total</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="p : ${pedidos}">
-            <td>
-              <span class="order-number" th:text="${p.numero}">PED-0001</span>
-            </td>
-            <td class="order-date" th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
-            <td>
-              <span th:replace="~{fragments/layout :: estado(${p.estado})}"></span>
-            </td>
-            <td class="text-center">
-              <span class="fw-semibold" style="font-family: var(--font-display);" th:text="${p.unidades}">1</span>
-            </td>
-            <td class="text-end order-total" th:text="${@dinero.formato(p.total)}">$0</td>
-            <td class="text-end">
-              <a class="btn btn-outline-blue btn-sm" th:href="@{/mis-pedidos/{id}(id=${p.id})}">Ver detalle</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="order-list" th:unless="${#lists.isEmpty(pedidos)}">
+      <article class="order-card" th:each="p : ${pedidos}">
+        <div class="order-card-top">
+          <div class="order-card-id">
+            <span class="order-number" th:text="${p.numero}">PED-0001</span>
+            <span class="order-date" th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">fecha</span>
+          </div>
+          <span th:replace="~{fragments/layout :: estado(${p.estado})}"></span>
+        </div>
+
+        <div class="order-card-meta">
+          <div>
+            <span>Artículos</span>
+            <strong th:text="${p.unidades}">1</strong>
+          </div>
+          <div>
+            <span>Total</span>
+            <strong th:text="${@dinero.formato(p.total)}">$0</strong>
+          </div>
+          <div>
+            <span>Pago</span>
+            <strong th:text="${p.metodoPago.etiqueta}">Contra entrega</strong>
+          </div>
+        </div>
+
+        <a class="btn btn-outline btn-sm" th:href="@{/mis-pedidos/{id}(id=${p.id})}">
+          Ver detalle
+          <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg>
+        </a>
+      </article>
     </div>
   </div>
 </main>
 
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

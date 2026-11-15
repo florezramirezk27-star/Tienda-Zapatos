@@ -3,43 +3,79 @@
 <head th:replace="~{fragments/layout :: head('Usuarios')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
-<main class="container py-4">
-  <div th:replace="~{fragments/layout :: alertas}"></div>
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Usuarios y roles</h1>
-    <a class="btn btn-dark" th:href="@{/admin/usuarios/nuevo}">Nuevo usuario</a>
-  </div>
 
-  <div class="table-responsive">
-    <table class="table bg-white shadow-sm align-middle">
-      <thead class="table-light">
-        <tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Rol</th><th>Estado</th><th></th></tr>
-      </thead>
-      <tbody>
-        <tr th:each="u : ${usuarios}">
-          <td th:text="${u.nombre}">Nombre</td>
-          <td th:text="${u.correo}">correo</td>
-          <td th:text="${u.telefono}">tel</td>
-          <td><span class="badge text-bg-primary" th:text="${u.rol.etiqueta}">Rol</span></td>
-          <td>
-            <span class="badge text-bg-success" th:if="${u.activo}">Activo</span>
-            <span class="badge text-bg-secondary" th:unless="${u.activo}">Inactivo</span>
-          </td>
-          <td class="text-end">
-            <!-- REQ-ZAP-008: se desactiva sin borrar el historial -->
-            <form th:if="${u.activo}" th:action="@{/admin/usuarios/{id}/desactivar(id=${u.id})}" method="post"
-                  onsubmit="return confirm('¿Desactivar esta cuenta?');">
-              <button class="btn btn-outline-danger btn-sm" type="submit">Desactivar</button>
-            </form>
-            <form th:unless="${u.activo}" th:action="@{/admin/usuarios/{id}/activar(id=${u.id})}" method="post">
-              <button class="btn btn-outline-success btn-sm" type="submit">Activar</button>
-            </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<main class="page-shell" id="main-content">
+  <div class="container">
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Administración</p>
+        <h1>Usuarios y roles</h1>
+        <p>Gestiona las cuentas y los permisos de acceso a la tienda.</p>
+      </div>
+      <a class="btn btn-brand" th:href="@{/admin/usuarios/nuevo}">
+        <svg th:replace="~{fragments/iconos :: icono('plus', 'icon')}"></svg>
+        Nuevo usuario
+      </a>
+    </header>
+
+    <section class="panel" aria-labelledby="usuarios-lista">
+      <div class="panel-head">
+        <h2 id="usuarios-lista">Cuentas registradas</h2>
+        <span class="badge badge-secondary" th:text="${#lists.size(usuarios)} + ' usuarios'">0 usuarios</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="u : ${usuarios}">
+              <td class="fw-semibold" th:text="${u.nombre}">Nombre</td>
+              <td class="text-muted" th:text="${u.correo}">correo</td>
+              <td class="text-muted" th:text="${u.telefono}">tel</td>
+              <td><span class="badge badge-secondary" th:text="${u.rol.etiqueta}">Rol</span></td>
+              <td>
+                <span class="badge badge-success" th:if="${u.activo}">Activo</span>
+                <span class="badge badge-danger" th:unless="${u.activo}">Inactivo</span>
+              </td>
+              <td class="text-end">
+                <!-- REQ-ZAP-008: se desactiva sin borrar el historial -->
+                <form th:if="${u.activo}" th:action="@{/admin/usuarios/{id}/desactivar(id=${u.id})}" method="post"
+                      onsubmit="return confirm('¿Desactivar esta cuenta?');">
+                  <button class="btn btn-outline-danger btn-sm" type="submit">
+                    <svg th:replace="~{fragments/iconos :: icono('x', 'icon-sm')}"></svg>
+                    Desactivar
+                  </button>
+                </form>
+                <form th:unless="${u.activo}" th:action="@{/admin/usuarios/{id}/activar(id=${u.id})}" method="post">
+                  <button class="btn btn-outline-success btn-sm" type="submit">
+                    <svg th:replace="~{fragments/iconos :: icono('check', 'icon-sm')}"></svg>
+                    Activar
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(usuarios)}">
+              <td colspan="6" class="text-center text-muted py-4">No hay usuarios registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 </main>
+
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

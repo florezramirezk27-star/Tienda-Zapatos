@@ -3,42 +3,86 @@
 <head th:replace="~{fragments/layout :: head('Pedidos')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
-<main class="container py-4">
-  <div th:replace="~{fragments/layout :: alertas}"></div>
-  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-    <h1 class="h3 mb-0">Pedidos</h1>
-    <div class="d-flex gap-2">
-      <form class="d-flex gap-2" method="get" th:action="@{/gestion/pedidos}">
-        <select class="form-select" name="estado" aria-label="Filtrar por estado" onchange="this.form.submit()">
-          <option value="">Todos los estados</option>
-          <option th:each="e : ${estados}" th:value="${e}" th:text="${e}" th:selected="${e == estadoFiltro}"></option>
-        </select>
-      </form>
-      <a class="btn btn-dark text-nowrap" sec:authorize="hasRole('VENDEDOR')" th:href="@{/ventas/nueva}">Nueva venta</a>
+
+<main class="page-shell" id="main-content">
+  <div class="container">
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Gestión</p>
+        <h1>Pedidos</h1>
+        <p>Revisa los pedidos de la tienda y su estado de entrega.</p>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <form class="d-flex gap-2" method="get" th:action="@{/gestion/pedidos}">
+          <label class="visually-hidden" for="estadoFiltro">Filtrar por estado</label>
+          <select class="form-select" id="estadoFiltro" name="estado" aria-label="Filtrar por estado" onchange="this.form.submit()">
+            <option value="">Todos los estados</option>
+            <option th:each="e : ${estados}" th:value="${e}" th:text="${e}" th:selected="${e == estadoFiltro}"></option>
+          </select>
+          <button class="btn btn-outline" type="submit">
+            <svg th:replace="~{fragments/iconos :: icono('search', 'icon-sm')}"></svg>
+            <span class="d-none d-sm-inline">Filtrar</span>
+          </button>
+        </form>
+        <a class="btn btn-brand" sec:authorize="hasRole('VENDEDOR')" th:href="@{/ventas/nueva}">
+          <svg th:replace="~{fragments/iconos :: icono('plus', 'icon')}"></svg>
+          Nueva venta
+        </a>
+      </div>
+    </header>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(pedidos)}">
+      <svg th:replace="~{fragments/iconos :: icono('package', 'icon')}"></svg>
+      <h2>No hay pedidos con ese estado</h2>
+      <p>Prueba con otro filtro o consulta todos los pedidos.</p>
+      <a class="btn btn-outline btn-sm" th:href="@{/gestion/pedidos}">Ver todos</a>
     </div>
-  </div>
 
-  <div class="alert alert-info" th:if="${#lists.isEmpty(pedidos)}">No hay pedidos con ese estado.</div>
+    <section class="panel" th:unless="${#lists.isEmpty(pedidos)}" aria-labelledby="pedidos-lista">
+      <div class="panel-head">
+        <h2 id="pedidos-lista">Listado de pedidos</h2>
+        <span class="badge badge-secondary" th:text="${#lists.size(pedidos)} + ' pedidos'">0 pedidos</span>
+      </div>
 
-  <div class="table-responsive" th:unless="${#lists.isEmpty(pedidos)}">
-    <table class="table bg-white shadow-sm align-middle">
-      <thead class="table-light">
-        <tr><th>Número</th><th>Fecha</th><th>Cliente</th><th>Canal</th><th>Estado</th><th class="text-end">Total</th><th></th></tr>
-      </thead>
-      <tbody>
-        <tr th:each="p : ${pedidos}">
-          <td th:text="${p.numero}">PED-0</td>
-          <td th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
-          <td th:text="${p.nombreCliente}">Cliente</td>
-          <td th:text="${p.canal.etiqueta}">Web</td>
-          <td><span th:replace="~{fragments/layout :: estado(${p.estado})}"></span></td>
-          <td class="text-end" th:text="${@dinero.formato(p.total)}">$0</td>
-          <td class="text-end"><a class="btn btn-outline-dark btn-sm" th:href="@{/gestion/pedidos/{id}(id=${p.id})}">Ver</a></td>
-        </tr>
-      </tbody>
-    </table>
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Canal</th>
+              <th>Estado</th>
+              <th class="text-end">Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="p : ${pedidos}">
+              <td><span class="order-number" th:text="${p.numero}">PED-0</span></td>
+              <td class="text-muted" th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">fecha</td>
+              <td th:text="${p.nombreCliente}">Cliente</td>
+              <td th:text="${p.canal.etiqueta}">Web</td>
+              <td><span th:replace="~{fragments/layout :: estado(${p.estado})}"></span></td>
+              <td class="text-end fw-bold" th:text="${@dinero.formato(p.total)}">$0</td>
+              <td class="text-end">
+                <a class="btn btn-outline btn-sm" th:href="@{/gestion/pedidos/{id}(id=${p.id})}">
+                  Ver
+                  <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon-sm')}"></svg>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 </main>
+
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

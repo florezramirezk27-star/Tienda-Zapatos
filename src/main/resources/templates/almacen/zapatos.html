@@ -3,49 +3,93 @@
 <head th:replace="~{fragments/layout :: head('Zapatos')}"></head>
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
-<main class="container py-4">
-  <div th:replace="~{fragments/layout :: alertas}"></div>
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Zapatos del catálogo</h1>
-    <a class="btn btn-dark" th:href="@{/almacen/zapatos/nuevo}">Nuevo zapato</a>
-  </div>
 
-  <div class="table-responsive">
-    <table class="table bg-white shadow-sm align-middle">
-      <thead class="table-light">
-        <tr><th>Referencia</th><th>Nombre</th><th>Marca</th><th>Categoría</th><th>Color</th><th class="text-end">Precio</th><th class="text-center">Stock</th><th>Estado</th><th></th></tr>
-      </thead>
-      <tbody>
-        <tr th:each="z : ${zapatos}">
-          <td><code th:text="${z.referencia}">ZAP-0</code></td>
-          <td th:text="${z.nombre}">Nombre</td>
-          <td th:text="${z.marca}">Marca</td>
-          <td th:text="${z.categoria}">Cat.</td>
-          <td th:text="${z.color}">Color</td>
-          <td class="text-end" th:text="${@dinero.formato(z.precio)}">$0</td>
-          <td class="text-center" th:text="${z.stockTotal}">0</td>
-          <td>
-            <span class="badge text-bg-success" th:if="${z.activo}">Activo</span>
-            <span class="badge text-bg-secondary" th:unless="${z.activo}">Inactivo</span>
-          </td>
-          <td class="text-end">
-            <div class="d-flex gap-1 justify-content-end">
-              <a class="btn btn-outline-dark btn-sm" th:href="@{/almacen/zapatos/{id}/editar(id=${z.id})}">Editar</a>
-              <!-- REQ-ZAP-013: se oculta del catálogo público; sus ventas anteriores no cambian -->
-              <form th:if="${z.activo}" th:action="@{/almacen/zapatos/{id}/desactivar(id=${z.id})}" method="post"
-                    onsubmit="return confirm('¿Desactivar este zapato? Dejará de verse en el catálogo.');">
-                <button class="btn btn-outline-danger btn-sm" type="submit">Desactivar</button>
-              </form>
-              <form th:unless="${z.activo}" th:action="@{/almacen/zapatos/{id}/activar(id=${z.id})}" method="post">
-                <button class="btn btn-outline-success btn-sm" type="submit">Activar</button>
-              </form>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<main class="page-shell" id="main-content">
+  <div class="container">
+    <div th:replace="~{fragments/layout :: alertas}"></div>
+
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Almacén</p>
+        <h1>Zapatos del catálogo</h1>
+        <p>Consulta, edita y controla la visibilidad de cada modelo.</p>
+      </div>
+      <a class="btn btn-brand" th:href="@{/almacen/zapatos/nuevo}">
+        <svg th:replace="~{fragments/iconos :: icono('plus', 'icon')}"></svg>
+        Nuevo zapato
+      </a>
+    </header>
+
+    <section class="panel" aria-labelledby="zapatos-lista">
+      <div class="panel-head">
+        <h2 id="zapatos-lista">Productos registrados</h2>
+        <span class="badge badge-secondary" th:text="${#lists.size(zapatos)} + ' zapatos'">0 zapatos</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Marca</th>
+              <th>Categoría</th>
+              <th>Color</th>
+              <th class="text-end">Precio</th>
+              <th class="text-center">Stock</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="z : ${zapatos}">
+              <td>
+                <div class="admin-product">
+                  <img th:replace="~{fragments/layout :: foto(${z}, 'admin-thumb')}">
+                  <div>
+                    <strong th:text="${z.nombre}">Nombre</strong>
+                    <small th:text="${z.referencia}">ZAP-0</small>
+                  </div>
+                </div>
+              </td>
+              <td th:text="${z.marca}">Marca</td>
+              <td th:text="${z.categoria}">Categoría</td>
+              <td th:text="${z.color}">Color</td>
+              <td class="text-end" th:text="${@dinero.formato(z.precio)}">$0</td>
+              <td class="text-center">
+                <strong th:text="${z.stockTotal}" th:classappend="${z.stockTotal == 0} ? 'stock-cero'">0</strong>
+              </td>
+              <td>
+                <span class="badge badge-success" th:if="${z.activo}">Activo</span>
+                <span class="badge badge-danger" th:unless="${z.activo}">Inactivo</span>
+              </td>
+              <td class="text-end">
+                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                  <a class="btn btn-outline btn-sm" th:href="@{/almacen/zapatos/{id}/editar(id=${z.id})}">
+                    <svg th:replace="~{fragments/iconos :: icono('sliders-horizontal', 'icon-sm')}"></svg>
+                    Editar
+                  </a>
+                  <!-- REQ-ZAP-013: se oculta del catálogo público; sus ventas anteriores no cambian -->
+                  <form th:if="${z.activo}" th:action="@{/almacen/zapatos/{id}/desactivar(id=${z.id})}" method="post"
+                        onsubmit="return confirm('¿Desactivar este zapato? Dejará de verse en el catálogo.');">
+                    <button class="btn btn-outline-danger btn-sm" type="submit">Desactivar</button>
+                  </form>
+                  <form th:unless="${z.activo}" th:action="@{/almacen/zapatos/{id}/activar(id=${z.id})}" method="post">
+                    <button class="btn btn-outline-success btn-sm" type="submit">Activar</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(zapatos)}">
+              <td colspan="8" class="text-center text-muted py-4">No hay zapatos registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 </main>
+
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

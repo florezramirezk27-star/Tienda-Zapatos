@@ -29,22 +29,25 @@ public class CatalogoController {
     }
 
     @GetMapping({"/", "/catalogo"})
-    public String catalogo(@RequestParam(required = false) String marca,
+    public String catalogo(@RequestParam(required = false) String q,
+                           @RequestParam(required = false) String marca,
                            @RequestParam(required = false) String categoria,
                            @RequestParam(required = false) Integer talla,
                            @RequestParam(required = false) BigDecimal precioMin,
                            @RequestParam(required = false) BigDecimal precioMax,
                            @RequestParam(defaultValue = "0") int pagina,
                            Model model) {
+        String busqueda = vacioANulo(q);
         String m = vacioANulo(marca);
         String c = vacioANulo(categoria);
         Page<Zapato> resultado = zapatos.findAll(
-                ZapatoSpecs.catalogo(m, c, talla, precioMin, precioMax),
+                ZapatoSpecs.catalogo(busqueda, m, c, talla, precioMin, precioMax),
                 PageRequest.of(Math.max(pagina, 0), TAMANO_PAGINA, Sort.by("nombre")));
 
         model.addAttribute("pagina", resultado);
         model.addAttribute("marcas", zapatos.marcasActivas());
         model.addAttribute("categorias", zapatos.categoriasActivas());
+        model.addAttribute("q", busqueda);
         model.addAttribute("marca", m);
         model.addAttribute("categoria", c);
         model.addAttribute("talla", talla);

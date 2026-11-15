@@ -4,110 +4,195 @@
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-<main class="product-detail">
+<main class="product-detail" id="main-content">
   <div class="container">
     <div th:replace="~{fragments/layout :: alertas}"></div>
 
-    <a class="enlace-volver d-inline-flex align-items-center gap-1 mb-4 focus-ring" th:href="@{/catalogo}" style="font-size: var(--fs-body-sm);">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      Volver al catálogo
-    </a>
+    <nav aria-label="Miga de pan">
+      <ol class="breadcrumb">
+        <li><a th:href="@{/}">Inicio</a></li>
+        <li><svg th:replace="~{fragments/iconos :: icono('chevron-right', 'icon')}"></svg></li>
+        <li><a th:href="@{/catalogo}">Catálogo</a></li>
+        <li><svg th:replace="~{fragments/iconos :: icono('chevron-right', 'icon')}"></svg></li>
+        <li><a th:href="@{/catalogo(categoria=${zapato.categoria})}" th:text="${zapato.categoria}">Categoría</a></li>
+        <li><svg th:replace="~{fragments/iconos :: icono('chevron-right', 'icon')}"></svg></li>
+        <li aria-current="page" th:text="${zapato.nombre}">Producto</li>
+      </ol>
+    </nav>
 
-    <div class="row g-5 align-items-start">
-      <!-- GALERÍA DE IMÁGENES -->
-      <div class="col-xl-6 col-lg-5">
-        <div class="product-gallery" style="position: sticky; top: 100px;">
-          <img th:replace="~{fragments/layout :: foto(${zapato}, 'w-100 h-100')}"
-               alt="Foto principal de ${zapato.nombre}"
-               style="width: 100%; height: 100%; object-fit: cover;">
+    <div class="detalle-grid">
+      <!-- ===== IMAGEN ===== -->
+      <div class="galeria-producto">
+        <div class="galeria-sticky">
+          <div class="product-gallery">
+            <img th:replace="~{fragments/layout :: foto(${zapato}, 'detalle-img')}">
+            <span class="product-badge badge-out" th:if="${zapato.stockTotal == 0}">Agotado</span>
+            <span class="product-badge badge-sale" th:if="${zapato.stockTotal > 0 and zapato.stockTotal <= 5}">Últimas unidades</span>
+          </div>
+          <p class="galeria-nota">
+            <svg th:replace="~{fragments/iconos :: icono('info', 'icon')}"></svg>
+            Imagen de referencia del modelo. El color puede variar según la pantalla.
+          </p>
         </div>
       </div>
 
-      <!-- INFORMACIÓN DEL PRODUCTO -->
-      <div class="col-xl-6 col-lg-7">
-        <div class="product-info">
-          <p class="product-meta" th:text="${zapato.marca} + ' · ' + ${zapato.categoria}">Marca · Categoría</h1>
+      <!-- ===== INFORMACIÓN Y COMPRA ===== -->
+      <div class="product-info">
+        <p class="product-meta">
+          <span th:text="${zapato.marca}">Marca</span>
+          <span class="sep" aria-hidden="true"></span>
+          <a th:href="@{/catalogo(categoria=${zapato.categoria})}" th:text="${zapato.categoria}">Categoría</a>
+        </p>
 
-          <h1 class="product-title" th:text="${zapato.nombre}">Nombre del zapato</h1>
+        <h1 class="product-title" th:text="${zapato.nombre}">Nombre del zapato</h1>
 
-          <div class="product-price" th:text="${@dinero.formato(zapato.precio)}">$0</div>
+        <div class="product-meta-line">
+          <span>
+            <svg th:replace="~{fragments/iconos :: icono('tag', 'icon')}"></svg>
+            Color: <strong th:text="${zapato.color}">Negro</strong>
+          </span>
+          <span>
+            <svg th:replace="~{fragments/iconos :: icono('package', 'icon')}"></svg>
+            Ref. <strong th:text="${zapato.referencia}">ZAP-000000</strong>
+          </span>
+          <span class="product-card-stock" th:if="${zapato.stockTotal > 0}"
+                th:classappend="${zapato.stockTotal <= 5} ? ' pocas'" th:text="${zapato.stockTotal <= 5 ? 'Pocas unidades' : 'Disponible'}">Disponible</span>
+          <span class="product-card-stock sin-stock" th:if="${zapato.stockTotal == 0}">Agotado</span>
+        </div>
 
-          <div class="product-details">
-            <div class="row g-2">
-              <div class="col-6 col-md-4">
-                <span>Color:</span> <span th:text="${zapato.color}">color</span>
-              </div>
-              <div class="col-6 col-md-4">
-                <span>Ref:</span> <span th:text="${zapato.referencia}">ref</span>
-              </div>
-              <div class="col-6 col-md-4">
-                <span>Stock total:</span>
-                <span th:text="${zapato.stockTotal}" class="fw-bold" th:classappend="${zapato.stockTotal == 0} ? 'text-danger' : 'stock-available'">0</span>
+        <div class="product-price">
+          <span th:text="${@dinero.formato(zapato.precio)}">$0</span>
+          <small>COP · IVA calculado al pagar</small>
+        </div>
+
+        <p class="product-description" th:if="${zapato.descripcion}" th:text="${zapato.descripcion}">
+          Descripción del producto.
+        </p>
+        <p class="product-description" th:unless="${zapato.descripcion}">
+          Este modelo no tiene una descripción detallada por el momento. Revisa sus datos y la disponibilidad por talla.
+        </p>
+
+        <div class="product-short-divider" aria-hidden="true"></div>
+
+        <!-- TALLAS Y COMPRA -->
+        <form id="form-compra" class="tallas-form" th:action="@{/carrito/agregar}" method="post"
+              th:attr="data-precio=${@dinero.formato(zapato.precio)}">
+          <div class="tallas-head">
+            <span class="talla-label" id="tallaLabel">Elige tu talla</span>
+            <span class="tallas-hint">Tallas 34 a 45 · Stock real por talla</span>
+          </div>
+
+          <div class="size-grid" role="group" aria-labelledby="tallaLabel">
+            <button type="button" class="talla-chip" th:each="t : ${zapato.tallas}"
+                    th:classappend="${t.agotada} ? ' agotada'"
+                    th:disabled="${t.agotada}"
+                    th:attr="data-talla-id=${t.id},data-talla=${t.talla},data-stock=${t.stock}"
+                    th:aria-label="${'Talla ' + t.talla + (t.agotada ? ', agotada' : ', ' + t.stock + ' unidades disponibles')}"
+                    aria-pressed="false">
+              <span th:text="${t.talla}">40</span>
+            </button>
+          </div>
+
+          <p class="size-legend">Las tallas tachadas están agotadas.</p>
+
+          <div id="stockInfo" class="stock-info" role="status" aria-live="polite"
+               th:classappend="${zapato.stockTotal == 0} ? ' agotado'">
+            <span class="stock-dot" aria-hidden="true"></span>
+            <span th:if="${zapato.stockTotal == 0}">Todas las tallas están agotadas por el momento.</span>
+            <span th:unless="${zapato.stockTotal == 0}">Selecciona una talla para ver la disponibilidad.</span>
+          </div>
+
+          <input type="hidden" name="tallaId" id="tallaId">
+
+          <div class="compra-row" sec:authorize="hasRole('CLIENTE')">
+            <div class="cantidad-campo">
+              <label for="cantidad">Cantidad</label>
+              <div class="qty-stepper">
+                <button type="button" data-qty="-1" aria-label="Disminuir cantidad">
+                  <svg th:replace="~{fragments/iconos :: icono('minus', 'icon')}"></svg>
+                </button>
+                <input type="number" id="cantidad" name="cantidad" min="1" max="1" value="1"
+                       inputmode="numeric" aria-label="Cantidad">
+                <button type="button" data-qty="1" aria-label="Aumentar cantidad">
+                  <svg th:replace="~{fragments/iconos :: icono('plus', 'icon')}"></svg>
+                </button>
               </div>
             </div>
+
+            <button class="btn btn-brand btn-comprar" id="btnAgregar" type="submit" disabled>
+              <svg th:replace="~{fragments/iconos :: icono('cart', 'icon')}"></svg>
+              Agregar al carrito
+            </button>
           </div>
 
-          <p class="product-description" th:if="${zapato.descripcion}" th:text="${zapato.descripcion}">
-            Descripción del producto no disponible.
-          </p>
-          <p class="product-description text-muted" th:unless="${zapato.descripcion}">
-            Este producto no tiene descripción detallada por el momento.
-          </p>
-
-          <!-- TALLAS -->
-          <h2 class="h4 mb-3" style="font-family: var(--font-display); font-weight: 700;">Elige tu talla</h2>
-
-          <p class="text-muted mb-4" sec:authorize="isAnonymous()">
-            <a th:href="@{/login}" class="fw-bold">Inicia sesión</a> o
-            <a th:href="@{/registro}" class="fw-bold">regístrate</a> como cliente para comprar.
-          </p>
-
-          <div class="size-table" sec:authorize="hasRole('CLIENTE')">
-            <table class="table mb-0" role="grid" aria-label="Disponibilidad de tallas">
-              <thead>
-                <tr>
-                  <th scope="col" class="size-cell">Talla</th>
-                  <th scope="col" class="stock-cell">Disponibilidad</th>
-                  <th scope="col">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr th:each="t : ${zapato.tallas}">
-                  <td class="size-cell" th:text="${t.talla}">40</td>
-                  <td class="stock-cell">
-                    <span class="badge badge-danger" th:if="${t.agotada}">Agotada</span>
-                    <span class="badge badge-success stock-available" th:unless="${t.agotada}" th:text="${t.stock} + ' disponibles'">3 disponibles</span>
-                  </td>
-                  <td>
-                    <form class="d-flex gap-2" th:action="@{/carrito/agregar}" method="post">
-                      <input type="hidden" name="tallaId" th:value="${t.id}">
-                      <input class="form-control qty-input" type="number" name="cantidad"
-                             min="1" max="10" value="1" th:disabled="${t.agotada}" aria-label="Cantidad">
-                      <button class="btn btn-brand" type="submit" th:disabled="${t.agotada}">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                          <path d="M12 5v14M5 12h14"/>
-                        </svg>
-                        Agregar
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="compra-login" sec:authorize="isAnonymous()">
+            <svg th:replace="~{fragments/iconos :: icono('lock', 'icon')}"></svg>
+            <p>Inicia sesión con tu cuenta de cliente para agregar este producto al carrito.</p>
+            <a class="btn btn-brand btn-sm" th:href="@{/login}">Iniciar sesión</a>
+            <a class="btn btn-outline btn-sm" th:href="@{/registro}">Crear cuenta</a>
           </div>
 
-          <div class="alert alert-info" sec:authorize="!hasRole('CLIENTE')" role="status">
-            <strong>Solo clientes</strong> pueden agregar productos al carrito.
-            <a th:href="@{/login}" class="ms-2 fw-bold">Iniciar sesión</a>
+          <div class="alert alert-info" sec:authorize="!isAnonymous() and !hasRole('CLIENTE')" role="status">
+            <svg th:replace="~{fragments/iconos :: icono('info', 'icon')}"></svg>
+            <div>Las cuentas de administración y gestión no pueden realizar compras en la tienda.</div>
+          </div>
+        </form>
+
+        <div class="product-highlights">
+          <div class="highlight-row">
+            <svg th:replace="~{fragments/iconos :: icono('ruler', 'icon')}"></svg>
+            <span><strong>Tu talla exacta.</strong> Cada talla muestra las unidades realmente disponibles.</span>
+          </div>
+          <div class="highlight-row">
+            <svg th:replace="~{fragments/iconos :: icono('truck', 'icon')}"></svg>
+            <span><strong>Envío gratis desde $150.000.</strong> El costo se calcula en el resumen del pedido.</span>
+          </div>
+          <div class="highlight-row">
+            <svg th:replace="~{fragments/iconos :: icono('shield-check', 'icon')}"></svg>
+            <span><strong>Pago contra entrega o transferencia.</strong> Elige el método al confirmar tu pedido.</span>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- ===== INFORMACIÓN COMPLEMENTARIA ===== -->
+  <section class="detalle-inferior" aria-label="Información de compra">
+    <div class="container">
+      <div class="detalle-info-grid">
+        <article class="detalle-info-card">
+          <svg th:replace="~{fragments/iconos :: icono('ruler', 'icon')}"></svg>
+          <h2>Compra tu talla correcta</h2>
+          <p>Selecciona una talla para consultar el stock y ajustar la cantidad antes de agregar el producto al carrito.</p>
+        </article>
+        <article class="detalle-info-card">
+          <svg th:replace="~{fragments/iconos :: icono('package-check', 'icon')}"></svg>
+          <h2>Inventario en tiempo real</h2>
+          <p>El stock se descuenta cuando confirmas el pedido. Si una talla se agota, dejará de estar disponible.</p>
+        </article>
+        <article class="detalle-info-card">
+          <svg th:replace="~{fragments/iconos :: icono('credit-card', 'icon')}"></svg>
+          <h2>Pago claro y seguro</h2>
+          <p>Puedes pagar contra entrega o por transferencia. El total con IVA se muestra antes de confirmar.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BARRA DE COMPRA MÓVIL ===== -->
+  <div class="mobile-buy-bar" sec:authorize="hasRole('CLIENTE')" aria-label="Compra rápida">
+    <span class="mobile-precio">
+      <small>Precio</small>
+      <strong id="precioMovil" th:text="${@dinero.formato(zapato.precio)}">$0</strong>
+    </span>
+    <button class="btn btn-brand" id="btnAgregarMovil" type="submit" form="form-compra" disabled>
+      <svg th:replace="~{fragments/iconos :: icono('cart', 'icon')}"></svg>
+      <span id="textoBotonMovil">Elegir talla</span>
+    </button>
+  </div>
 </main>
 
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

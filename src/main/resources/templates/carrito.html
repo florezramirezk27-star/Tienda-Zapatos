@@ -4,134 +4,142 @@
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-<main class="cart-page">
+<main class="cart-page" id="main-content">
   <div class="container">
     <div th:replace="~{fragments/layout :: alertas}"></div>
 
-    <header class="mb-5">
-      <h1 class="display-title" style="font-size: var(--fs-h1); font-weight: 800;">Mi carrito</h1>
-      <p class="text-muted" style="font-size: var(--fs-body-lg);" th:unless="${carrito.vacio}">
-        <span th:text="${carrito.unidades}">0</span> producto(s) · Revisa tu pedido antes de continuar
-      </p>
+    <header class="page-head">
+      <div>
+        <p class="eyebrow">Tu selección</p>
+        <h1 class="display-title">Mi carrito</h1>
+        <p th:unless="${carrito.vacio}">
+          <span th:text="${carrito.unidades}">0</span>
+          <span th:text="${carrito.unidades == 1 ? 'producto' : 'productos'}">productos</span>
+          en tu pedido. Revisa las tallas y cantidades antes de continuar.
+        </p>
+        <p th:if="${carrito.vacio}">Revisa aquí los productos que quieras comprar.</p>
+      </div>
+      <a class="btn btn-outline" th:unless="${carrito.vacio}" th:href="@{/catalogo}">
+        <svg th:replace="~{fragments/iconos :: icono('arrow-left', 'icon')}"></svg>
+        Seguir comprando
+      </a>
     </header>
 
     <!-- CARRITO VACÍO -->
     <div class="cart-empty" th:if="${carrito.vacio}" role="status">
-      <div class="cart-empty-icon" aria-hidden="true">🛒</div>
+      <div class="cart-empty-icon" aria-hidden="true">
+        <svg th:replace="~{fragments/iconos :: icono('cart', 'icon')}"></svg>
+      </div>
       <h2 class="cart-empty-title">Tu carrito está vacío</h2>
-      <p class="cart-empty-text">Parece que aún no has agregado ningún zapato. ¡Explora el catálogo y encuentra tu par perfecto!</p>
-      <a class="btn btn-brand btn-lg" th:href="@{/catalogo}">Ir al catálogo</a>
+      <p class="cart-empty-text">Todavía no has agregado ningún par. Explora el catálogo, elige tu talla y vuelve cuando lo tengas listo.</p>
+      <a class="btn btn-brand btn-lg" th:href="@{/catalogo}">
+        Explorar el catálogo
+        <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg>
+      </a>
     </div>
 
     <!-- CARRITO CON PRODUCTOS -->
-    <div class="row g-5" th:unless="${carrito.vacio}">
-      <div class="col-xl-8 col-lg-7">
-        <div class="cart-table">
-          <table class="table mb-0" role="grid" aria-label="Productos en el carrito">
-            <thead>
-              <tr>
-                <th scope="col" style="width: 45%;">Producto</th>
-                <th scope="col" class="text-center" style="width: 10%;">Talla</th>
-                <th scope="col" style="width: 18%;">Cantidad</th>
-                <th scope="col" class="text-end" style="width: 12%;">Precio</th>
-                <th scope="col" class="text-end" style="width: 12%;">Subtotal</th>
-                <th scope="col" style="width: 3%;"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="i : ${carrito.items}">
-                <td>
-                  <div class="cart-product">
-                    <img class="cart-product-img" th:replace="~{fragments/layout :: foto(${i}, 'cart-product-img')}"
-                         th:alt="${i.nombre}" loading="lazy">
-                    <div class="cart-product-info">
-                      <a class="cart-product-name" th:href="@{/zapatos/{id}(id=${i.zapatoId})}" th:text="${i.nombre}">Zapato</a>
-                      <div class="cart-product-meta">
-                        <span th:text="${i.marca}">Marca</span> · <span th:text="${i.categoria}">Categoría</span> · <span th:text="${i.color}">Color</span>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td class="text-center">
-                  <span class="fw-semibold" style="font-family: var(--font-display); font-size: var(--fs-body-lg);" th:text="${i.talla}">40</span>
-                </td>
-                <td>
-                  <form class="cart-qty-form" th:action="@{/carrito/actualizar}" method="post">
-                    <input type="hidden" name="tallaId" th:value="${i.tallaId}">
-                    <button type="button" class="cart-qty-btn" aria-label="Disminuir cantidad"
-                            onclick="this.form.cantidad.value = Math.max(1, parseInt(this.form.cantidad.value) - 1); this.form.requestSubmit();">−</button>
-                    <input class="form-control cart-qty-input" type="number" name="cantidad"
-                           min="1" max="99" th:value="${i.cantidad}" aria-label="Cantidad">
-                    <button type="button" class="cart-qty-btn" aria-label="Aumentar cantidad"
-                            onclick="this.form.cantidad.value = Math.min(99, parseInt(this.form.cantidad.value) + 1); this.form.requestSubmit();">+</button>
-                    <button class="btn btn-outline-blue btn-sm ms-2" type="submit" aria-label="Actualizar">✓</button>
-                  </form>
-                </td>
-                <td class="text-end cart-price" th:text="${@dinero.formato(i.precio)}">$0</td>
-                <td class="text-end cart-subtotal" th:text="${@dinero.formato(i.subtotal)}">$0</td>
-                <td class="text-end">
-                  <form th:action="@{/carrito/eliminar}" method="post" onsubmit="return confirm('¿Quitar este producto del carrito?');">
-                    <input type="hidden" name="tallaId" th:value="${i.tallaId}">
-                    <button class="cart-remove" type="submit" aria-label="Eliminar ${i.nombre}">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                      </svg>
-                    </button>
-                  </form>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <div class="cart-layout" th:unless="${carrito.vacio}">
+      <section aria-label="Productos en el carrito">
+        <div class="cart-list">
+          <div class="cart-list-head">
+            <span>Producto</span>
+            <span>Cantidad y precio</span>
+          </div>
 
-        <div class="mt-4 d-flex justify-content-start">
-          <a class="btn btn-outline-blue" th:href="@{/catalogo}">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Seguir comprando
-          </a>
+          <article class="cart-item" th:each="i : ${carrito.items}">
+            <img th:replace="~{fragments/layout :: foto(${i}, 'cart-product-img')}">
+
+            <div class="cart-item-main">
+              <a class="cart-product-name" th:href="@{/zapatos/{id}(id=${i.zapatoId})}" th:text="${i.nombre}">Zapato</a>
+              <p class="cart-product-meta">
+                <span th:text="${i.marca}">Marca</span> ·
+                <span th:text="${i.categoria}">Categoría</span> ·
+                <span th:text="${i.color}">Color</span> ·
+                Talla <strong th:text="${i.talla}">40</strong>
+              </p>
+
+              <div class="cart-item-tools">
+                <form class="cart-qty-form" th:action="@{/carrito/actualizar}" method="post">
+                  <input type="hidden" name="tallaId" th:value="${i.tallaId}">
+                  <div class="qty-stepper">
+                    <button type="button" class="cart-qty-btn" data-cart-step="-1" aria-label="Disminuir cantidad de este producto">
+                      <svg th:replace="~{fragments/iconos :: icono('minus', 'icon-sm')}"></svg>
+                    </button>
+                    <input type="number" name="cantidad" min="1" max="99" th:value="${i.cantidad}"
+                           inputmode="numeric" aria-label="Cantidad de este producto">
+                    <button type="button" class="cart-qty-btn" data-cart-step="1" aria-label="Aumentar cantidad de este producto">
+                      <svg th:replace="~{fragments/iconos :: icono('plus', 'icon-sm')}"></svg>
+                    </button>
+                  </div>
+                  <button class="btn-actualizar" type="submit">Actualizar</button>
+                </form>
+
+                <form th:action="@{/carrito/eliminar}" method="post"
+                      onsubmit="return confirm('¿Quitar este producto del carrito?');">
+                  <input type="hidden" name="tallaId" th:value="${i.tallaId}">
+                  <button class="cart-remove" type="submit" th:aria-label="'Quitar ' + ${i.nombre} + ' del carrito'">
+                    <svg th:replace="~{fragments/iconos :: icono('trash', 'icon-sm')}"></svg>
+                    Quitar
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div class="cart-item-prices">
+              <span class="cart-price" th:text="${@dinero.formato(i.precio)} + ' c/u'">$0 c/u</span>
+              <div class="cart-subtotal" th:text="${@dinero.formato(i.subtotal)}">$0</div>
+            </div>
+          </article>
         </div>
-      </div>
+      </section>
 
       <!-- RESUMEN DEL PEDIDO -->
-      <div class="col-xl-4 col-lg-5">
-        <aside class="cart-summary" aria-label="Resumen del pedido">
-          <h2 class="cart-summary-title">Resumen del pedido</h2>
+      <aside class="cart-summary" aria-label="Resumen del pedido">
+        <h2 class="cart-summary-title">Resumen del pedido</h2>
 
-          <div class="cart-summary-row">
-            <span>Subtotal (<span th:text="${carrito.unidades}">0</span> items)</span>
-            <span th:text="${@dinero.formato(carrito.subtotal)}">$0</span>
-          </div>
-          <div class="cart-summary-row">
-            <span>Envío</span>
-            <span class="fw-semibold" th:text="${carrito.subtotal >= 150000} ? 'Gratis' : '@dinero.formato(12000)'">$12.000</span>
-          </div>
-          <div class="cart-summary-row">
-            <span>IVA (19%)</span>
-            <span th:text="${@dinero.formato(carrito.iva)}">$0</span>
-          </div>
-          <div class="cart-summary-row total">
-            <span>Total</span>
-            <span th:text="${@dinero.formato(carrito.total + (carrito.subtotal >= 150000 ? 0 : 12000))}">$0</span>
-          </div>
+        <div class="cart-summary-row">
+          <span>Subtotal (<span th:text="${carrito.unidades}">0</span> productos)</span>
+          <span th:text="${@dinero.formato(carrito.subtotal)}">$0</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Envío</span>
+          <span th:if="${carrito.envioGratis}">Gratis</span>
+          <span th:unless="${carrito.envioGratis}" th:text="${@dinero.formato(carrito.envio)}">$12.000</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>IVA (19%)</span>
+          <span th:text="${@dinero.formato(carrito.iva)}">$0</span>
+        </div>
+        <div class="cart-summary-row total">
+          <span>Total</span>
+          <span th:text="${@dinero.formato(carrito.totalConEnvio)}">$0</span>
+        </div>
 
-          <p class="text-muted small text-center mt-3 mb-0" th:if="${carrito.subtotal < 150000}">
-            Agrega <strong th:text="${@dinero.formato(150000 - carrito.subtotal)}">$0</strong> más para envío gratis
-          </p>
+        <p class="cart-envio-nota" th:unless="${carrito.envioGratis}">
+          <svg th:replace="~{fragments/iconos :: icono('truck', 'icon-sm')}"></svg>
+          <span>Te faltan <strong th:text="${@dinero.formato(carrito.faltanteEnvioGratis)}">$0</strong> para el envío gratis.</span>
+        </p>
+        <p class="cart-envio-nota" th:if="${carrito.envioGratis}">
+          <svg th:replace="~{fragments/iconos :: icono('truck', 'icon-sm')}"></svg>
+          <span>Este pedido tiene envío gratis por superar $150.000.</span>
+        </p>
 
-          <a class="btn btn-brand btn-lg cart-summary-btn" th:href="@{/pedidos/confirmar}">
-            Continuar con el pedido
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="ms-1">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </aside>
-      </div>
+        <a class="btn btn-brand btn-lg cart-summary-btn" th:href="@{/pedidos/confirmar}">
+          Continuar con el pedido
+          <svg th:replace="~{fragments/iconos :: icono('arrow-right', 'icon')}"></svg>
+        </a>
+
+        <p class="cart-seguridad">
+          <svg th:replace="~{fragments/iconos :: icono('shield-check', 'icon-sm')}"></svg>
+          Compra protegida · Pago contra entrega o transferencia
+        </p>
+      </aside>
     </div>
   </div>
 </main>
 
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

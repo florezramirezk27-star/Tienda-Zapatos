@@ -4,31 +4,28 @@
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-<main class="error-page" role="main" aria-labelledby="error-title">
+<main class="error-page" id="main-content" aria-labelledby="error-title">
   <div class="error-content">
-    <div class="error-code" aria-hidden="true">500</div>
+    <div class="error-icon" aria-hidden="true">
+      <svg th:replace="~{fragments/iconos :: icono('alert-triangle', 'icon')}"></svg>
+    </div>
+    <div class="error-code">500</div>
     <h1 id="error-title" class="error-title">Error del servidor</h1>
-    <p class="error-text">Algo ha salido mal de nuestro lado. Nuestro equipo ya ha sido notificado y está trabajando para solucionarlo. Por favor, inténtalo de nuevo en unos minutos.</p>
+    <p class="error-text">Algo salió mal de nuestro lado. Inténtalo de nuevo en unos minutos. Si el problema continúa, vuelve al catálogo para seguir explorando.</p>
     <div class="error-actions">
       <a class="btn btn-brand btn-lg" th:href="@{/}">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
+        <svg th:replace="~{fragments/iconos :: icono('house', 'icon')}"></svg>
         Volver al inicio
       </a>
-      <button class="btn btn-outline-blue btn-lg" onclick="window.location.reload()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
-          <path d="M23 4v6h-6"/>
-          <path d="M1 20v-6h6"/>
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-        </svg>
+      <button class="btn btn-outline btn-lg" type="button" onclick="window.location.reload()">
+        <svg th:replace="~{fragments/iconos :: icono('refresh', 'icon')}"></svg>
         Reintentar
       </button>
     </div>
   </div>
 </main>
 
+<footer th:replace="~{fragments/layout :: pie}"></footer>
 <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 </body>
 </html>

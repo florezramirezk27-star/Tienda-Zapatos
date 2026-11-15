@@ -15,10 +15,19 @@ import java.util.Map;
 @Component
 @SessionScope
 public class Carrito implements Serializable {
+
+    /** Valores de presentación usados en el resumen del carrito y del checkout. */
+    public static final BigDecimal COSTO_ENVIO = BigDecimal.valueOf(12_000);
+    public static final BigDecimal MINIMO_ENVIO_GRATIS = BigDecimal.valueOf(150_000);
+
     public static class Item implements Serializable {
         private final Long tallaId;
         private final Long zapatoId;
         private final String nombre;
+        private final String marca;
+        private final String categoria;
+        private final String color;
+        private final String imagen;
         private final int talla;
         private final BigDecimal precio;
         private int cantidad;
@@ -27,6 +36,10 @@ public class Carrito implements Serializable {
             this.tallaId = t.getId();
             this.zapatoId = t.getZapato().getId();
             this.nombre = t.getZapato().getNombre();
+            this.marca = t.getZapato().getMarca();
+            this.categoria = t.getZapato().getCategoria();
+            this.color = t.getZapato().getColor();
+            this.imagen = t.getZapato().getImagen();
             this.talla = t.getTalla();
             this.precio = t.getZapato().getPrecio();
             this.cantidad = cantidad;
@@ -46,6 +59,22 @@ public class Carrito implements Serializable {
 
         public String getNombre() {
             return nombre;
+        }
+
+        public String getMarca() {
+            return marca;
+        }
+
+        public String getCategoria() {
+            return categoria;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public String getImagen() {
+            return imagen;
         }
 
         public int getTalla() {
@@ -124,5 +153,26 @@ public class Carrito implements Serializable {
 
     public BigDecimal getTotal() {
         return getSubtotal().add(getIva());
+    }
+
+    /** Envío mostrado en el resumen; es gratis cuando el subtotal alcanza el mínimo. */
+    public BigDecimal getEnvio() {
+        return isEnvioGratis() ? BigDecimal.ZERO : COSTO_ENVIO;
+    }
+
+    public boolean isEnvioGratis() {
+        return getSubtotal().compareTo(MINIMO_ENVIO_GRATIS) >= 0;
+    }
+
+    public BigDecimal getTotalConEnvio() {
+        return getTotal().add(getEnvio());
+    }
+
+    /** Cuánto falta para alcanzar el envío gratis; cero si ya se alcanzó. */
+    public BigDecimal getFaltanteEnvioGratis() {
+        if (isEnvioGratis()) {
+            return BigDecimal.ZERO;
+        }
+        return MINIMO_ENVIO_GRATIS.subtract(getSubtotal());
     }
 }
