@@ -128,7 +128,7 @@ class TiendaVistasTest {
     }
 
     @Test
-    void elDetalleMuestraLasTallasRealesYDeshabilitaLasAgotadas() throws Exception {
+    void ac019_1_laTallaAgotadaSeMuestraComoAgotadaYElBotonEstaDeshabilitado() throws Exception {
         Zapato z = TestDatos.zapato("Air Runner", "329000");
         z.setMarca("Nike");
         for (int talla = TallaStock.TALLA_MIN; talla <= TallaStock.TALLA_MAX; talla++) {
@@ -147,6 +147,7 @@ class TiendaVistasTest {
                 .andExpect(content().string(containsString(
                         "data-talla-id=\"" + talla40Id + "\" data-talla=\"40\" data-stock=\"2\"")))
                 .andExpect(content().string(containsString("aria-label=\"Talla 41, agotada\"")))
+                .andExpect(content().string(containsString(">Agotada</span>")))
                 .andExpect(content().string(containsString("Agregar al carrito")))
                 .andReturn();
 
@@ -154,6 +155,19 @@ class TiendaVistasTest {
         assertThat(contar(html, "class=\"talla-chip[ \"]")).isEqualTo(12);
         assertThat(contar(html, "class=\"talla-chip\\s+agotada\"")).isEqualTo(1);
         assertThat(html).contains("Selecciona una talla para ver la disponibilidad");
+        assertThat(html).containsPattern("class=\"talla-chip agotada\"[^>]*disabled");
+    }
+
+    @Test
+    void elVisitanteNoVeElCarritoEnLaNavegacionPeroElClienteSi() throws Exception {
+        mvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.not(
+                        containsString("aria-label=\"Carrito de compras\""))));
+
+        mvc.perform(get("/").with(user("cliente@vistas.test").roles("CLIENTE")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("aria-label=\"Carrito de compras\"")));
     }
 
     @Test
@@ -200,7 +214,7 @@ class TiendaVistasTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Air Runner")))
                 .andExpect(content().string(containsString("Talla <strong>40</strong>")))
-                .andExpect(content().string(containsString("Gratis")))
+                .andExpect(content().string(containsString("$783.020")))
                 .andExpect(content().string(containsString("Continuar con el pedido")));
 
         mvc.perform(get("/pedidos/confirmar").session(sesion)
@@ -210,6 +224,7 @@ class TiendaVistasTest {
                 .andExpect(content().string(containsString("name=\"metodoPago\"")))
                 .andExpect(content().string(containsString("value=\"CONTRA_ENTREGA\"")))
                 .andExpect(content().string(containsString("value=\"TRANSFERENCIA\"")))
+                .andExpect(content().string(containsString("$783.020")))
                 .andExpect(content().string(containsString("Confirmar pedido")));
     }
 }

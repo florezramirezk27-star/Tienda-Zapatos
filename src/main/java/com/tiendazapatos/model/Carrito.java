@@ -16,10 +16,6 @@ import java.util.Map;
 @SessionScope
 public class Carrito implements Serializable {
 
-    /** Valores de presentación usados en el resumen del carrito y del checkout. */
-    public static final BigDecimal COSTO_ENVIO = BigDecimal.valueOf(12_000);
-    public static final BigDecimal MINIMO_ENVIO_GRATIS = BigDecimal.valueOf(150_000);
-
     public static class Item implements Serializable {
         private final Long tallaId;
         private final Long zapatoId;
@@ -151,28 +147,8 @@ public class Carrito implements Serializable {
         return Pedido.ivaDe(getSubtotal());
     }
 
+    /** REQ-ZAP-025: total = subtotal + IVA; no se agrega ningún costo de envío. */
     public BigDecimal getTotal() {
         return getSubtotal().add(getIva());
-    }
-
-    /** Envío mostrado en el resumen; es gratis cuando el subtotal alcanza el mínimo. */
-    public BigDecimal getEnvio() {
-        return isEnvioGratis() ? BigDecimal.ZERO : COSTO_ENVIO;
-    }
-
-    public boolean isEnvioGratis() {
-        return getSubtotal().compareTo(MINIMO_ENVIO_GRATIS) >= 0;
-    }
-
-    public BigDecimal getTotalConEnvio() {
-        return getTotal().add(getEnvio());
-    }
-
-    /** Cuánto falta para alcanzar el envío gratis; cero si ya se alcanzó. */
-    public BigDecimal getFaltanteEnvioGratis() {
-        if (isEnvioGratis()) {
-            return BigDecimal.ZERO;
-        }
-        return MINIMO_ENVIO_GRATIS.subtract(getSubtotal());
     }
 }

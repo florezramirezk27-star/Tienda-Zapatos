@@ -103,27 +103,13 @@
           <span th:text="${@dinero.formato(carrito.subtotal)}">$0</span>
         </div>
         <div class="cart-summary-row">
-          <span>Envío</span>
-          <span th:if="${carrito.envioGratis}">Gratis</span>
-          <span th:unless="${carrito.envioGratis}" th:text="${@dinero.formato(carrito.envio)}">$12.000</span>
-        </div>
-        <div class="cart-summary-row">
           <span>IVA (19%)</span>
           <span th:text="${@dinero.formato(carrito.iva)}">$0</span>
         </div>
         <div class="cart-summary-row total">
           <span>Total</span>
-          <span th:text="${@dinero.formato(carrito.totalConEnvio)}">$0</span>
+          <span th:text="${@dinero.formato(carrito.total)}">$0</span>
         </div>
-
-        <p class="cart-envio-nota" th:unless="${carrito.envioGratis}">
-          <svg th:replace="~{fragments/iconos :: icono('truck', 'icon-sm')}"></svg>
-          <span>Te faltan <strong th:text="${@dinero.formato(carrito.faltanteEnvioGratis)}">$0</strong> para el envío gratis.</span>
-        </p>
-        <p class="cart-envio-nota" th:if="${carrito.envioGratis}">
-          <svg th:replace="~{fragments/iconos :: icono('truck', 'icon-sm')}"></svg>
-          <span>Este pedido tiene envío gratis por superar $150.000.</span>
-        </p>
 
         <a class="btn btn-brand btn-lg cart-summary-btn" th:href="@{/pedidos/confirmar}">
           Continuar con el pedido

@@ -116,17 +116,12 @@
             <strong th:text="${@dinero.formato(carrito.subtotal)}">$0</strong>
           </div>
           <div class="checkout-total-row">
-            <span>Envío</span>
-            <strong th:if="${carrito.envioGratis}">Gratis</strong>
-            <strong th:unless="${carrito.envioGratis}" th:text="${@dinero.formato(carrito.envio)}">$12.000</strong>
-          </div>
-          <div class="checkout-total-row">
             <span>IVA (19%)</span>
             <strong th:text="${@dinero.formato(carrito.iva)}">$0</strong>
           </div>
           <div class="checkout-total-row total">
             <span>Total</span>
-            <strong th:text="${@dinero.formato(carrito.totalConEnvio)}">$0</strong>
+            <strong th:text="${@dinero.formato(carrito.total)}">$0</strong>
           </div>
         </div>
 
@@ -134,9 +129,9 @@
           <svg th:replace="~{fragments/iconos :: icono('info', 'icon-sm')}"></svg>
           Al confirmar, el inventario de cada talla se descuenta de forma definitiva.
         </p>
-        <p class="checkout-help" th:unless="${carrito.envioGratis}">
-          <svg th:replace="~{fragments/iconos :: icono('truck', 'icon-sm')}"></svg>
-          Envío gratis desde $150.000.
+        <p class="checkout-help">
+          <svg th:replace="~{fragments/iconos :: icono('package-check', 'icon-sm')}"></svg>
+          El total mostrado es el que quedará registrado en el pedido: subtotal + IVA.
         </p>
       </aside>
     </div>
