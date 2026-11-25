@@ -655,7 +655,7 @@ Se considera terminado cuando la especificación está aprobada, el proyecto Spr
 
 ## 11. Supuestos y dependencias
 
-1. PostgreSQL está disponible en `localhost:5432` con la base `tienda_zapatos`; las credenciales se pasan por `DB_USER` y `DB_PASSWORD` (desviación ADR-006 respecto al DOCX, que pedía MySQL 8 en `3306`).
+1. PostgreSQL está disponible en `localhost:5432` con la base `tienda_zapatos` para desarrollo; Render usa Neon con `DB_URL`, `DB_USER` y `DB_PASSWORD` (desviación ADR-006 respecto al DOCX, que pedía MySQL 8 en `3306`).
 2. El esquema se ejecuta una vez con `database/tienda_zapatos.sql`; la aplicación valida el esquema al arrancar.
 3. Las pruebas automáticas no requieren el servidor PostgreSQL: usan H2 en memoria en modo PostgreSQL.
 4. El docente actúa como Product Owner y aprueba la especificación y la decisión de release.

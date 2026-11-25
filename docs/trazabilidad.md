@@ -91,7 +91,7 @@ Cada fila conecta un criterio de aceptación con su historia, sus requisitos, la
 | NFR-ZAP-001 | Primera página del catálogo < 2 s con 100 zapatos | Paginación de 12 y medición en navegador | Pendiente de medición formal |
 | NFR-ZAP-002 | Rutas por rol y CSRF activo | `SecurityConfig`, `TiendaIntegracionTest.ac009_1`, `ac031_2`; todos los POST usan `csrf()` | Verde |
 | NFR-ZAP-003 | Uso desde computador y celular sin instalar app | Thymeleaf + Bootstrap 5 + CSS responsive | Verde por revisión |
-| NFR-ZAP-004 | Texto original: MySQL 8 con JPA, sin MongoDB | `pom.xml` (`org.postgresql:postgresql`), `application.properties` (PostgreSQL), sin MongoDB; arranque con `validate` OK en PostgreSQL 16.15; [ADR-006](adr/ADR-006.md) | **Desviación autorizada (ADR-006)**: se usa PostgreSQL; no cumple la redacción original del DOCX, pero el esquema quedó validado en el servidor real |
+| NFR-ZAP-004 | Texto original: MySQL 8 con JPA, sin MongoDB | `pom.xml` (`org.postgresql:postgresql`), `application.properties` (`DB_URL`), sin MongoDB; arranque con `validate` OK en PostgreSQL 16.15; esquemas `tienda_zapatos.sql` (local) y `tienda_zapatos_neon.sql` (Render); [ADR-006](adr/ADR-006.md) | **Desviación autorizada (ADR-006)**: se usa PostgreSQL (local y Neon/Render); no cumple la redacción original del DOCX, pero el esquema quedó validado en el servidor real |
 | NFR-ZAP-005 | Ley 1581 y sin contraseñas en logs | BCrypt, mensaje genérico, `DatosIniciales` sin clave, revisión de logs | Verde |
 | NFR-ZAP-006 | MVC sin carpeta/paquete `service` | Estructura de paquetes y compilación | Verde |
 

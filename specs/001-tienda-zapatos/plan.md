@@ -234,22 +234,35 @@ Resultado de referencia: **82 pruebas, 0 fallos, 0 errores, 0 omitidas**.
 
 ## 11. Configuración
 
-### Producción (PostgreSQL, ADR-006)
+### Local / STS (PostgreSQL, ADR-006)
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/tienda_zapatos?stringtype=unspecified
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/tienda_zapatos?stringtype=unspecified}
 spring.datasource.username=${DB_USER:postgres}
 spring.datasource.password=${DB_PASSWORD:}
 spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+tienda.datos-demo=${TIENDA_DATOS_DEMO:true}
 ```
 
 Pasos:
 
 1. Crear la base (`createdb -U postgres tienda_zapatos`) y ejecutar `database/tienda_zapatos.sql`.
-2. Definir `DB_USER` y `DB_PASSWORD`.
-3. `mvn spring-boot:run`.
+2. Definir `DB_USER` y `DB_PASSWORD` en la Run Configuration de STS.
+3. `mvn spring-boot:run` o ejecutar desde STS.
 4. Abrir `http://localhost:8080`.
+
+### Render / Neon (producción)
+
+La misma aplicación usa Neon en Render. Definir en Render → Environment:
+
+| Variable | Valor |
+|---|---|
+| `DB_URL` | `jdbc:postgresql://<host>/<db>?sslmode=require&stringtype=unspecified` |
+| `DB_USER`, `DB_PASSWORD` | Credenciales de Neon |
+| `TIENDA_DATOS_DEMO` | `false` |
+
+Ejecutar primero `database/tienda_zapatos_neon.sql` en el SQL Editor de Neon. Build: `mvn -B clean package`; Start: `java -jar target/tienda-zapatos-1.0.0.jar`.
 
 ### Pruebas (H2)
 
