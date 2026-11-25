@@ -84,12 +84,13 @@
 
           <div class="size-grid" role="group" aria-labelledby="tallaLabel">
             <button type="button" class="talla-chip" th:each="t : ${zapato.tallas}"
-                    th:classappend="${t.agotada} ? ' agotada'"
+                    th:classappend="${t.agotada} ? 'agotada'"
                     th:disabled="${t.agotada}"
                     th:attr="data-talla-id=${t.id},data-talla=${t.talla},data-stock=${t.stock}"
                     th:aria-label="${'Talla ' + t.talla + (t.agotada ? ', agotada' : ', ' + t.stock + ' unidades disponibles')}"
                     aria-pressed="false">
-              <span th:text="${t.talla}">40</span>
+              <span class="talla-numero" th:text="${t.talla}">40</span>
+              <span class="talla-estado" th:if="${t.agotada}">Agotada</span>
             </button>
           </div>
 
@@ -145,7 +146,7 @@
           </div>
           <div class="highlight-row">
             <svg th:replace="~{fragments/iconos :: icono('truck', 'icon')}"></svg>
-            <span><strong>Envío gratis desde $150.000.</strong> El costo se calcula en el resumen del pedido.</span>
+            <span><strong>Entrega en 24–48 h.</strong> Coordinamos el envío en ciudades principales.</span>
           </div>
           <div class="highlight-row">
             <svg th:replace="~{fragments/iconos :: icono('shield-check', 'icon')}"></svg>

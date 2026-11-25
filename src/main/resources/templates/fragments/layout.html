@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title th:text="${titulo} + ' · STEP Calzado'">STEP · Calzado</title>
-  <meta name="description" content="STEP - Calzado con personalidad para cada paso. Zapatillas deportivas, casuales, formales, botas y sandalias. Envío gratis desde $150.000.">
+  <meta name="description" content="STEP - Calzado con personalidad para cada paso. Zapatillas deportivas, casuales, formales, botas y sandalias con stock real por talla.">
   <meta name="theme-color" content="#172A3A">
   <link rel="icon" type="image/svg+xml" th:href="@{/img/favicon.svg}">
   <link rel="stylesheet" th:href="@{/vendor/bootstrap.min.css}">
@@ -78,7 +78,7 @@
     </form>
 
     <div class="barra-acciones">
-      <a class="accion-icono" th:href="@{/carrito}" sec:authorize="!hasAnyRole('ADMINISTRADOR','GERENTE','VENDEDOR','ALMACENISTA')"
+      <a class="accion-icono" th:href="@{/carrito}" sec:authorize="hasRole('CLIENTE')"
          aria-label="Carrito de compras">
         <svg th:replace="~{fragments/iconos :: icono('cart', 'icon')}"></svg>
         <span class="contador-carrito" th:text="${@carrito.unidades}">0</span>
@@ -263,7 +263,7 @@
         <ul class="pie-beneficios">
           <li>
             <svg th:replace="~{fragments/iconos :: icono('truck', 'icon-sm')}"></svg>
-            <span>Envío gratis desde $150.000</span>
+            <span>Entrega en 24–48 h en ciudades principales</span>
           </li>
           <li>
             <svg th:replace="~{fragments/iconos :: icono('refresh', 'icon-sm')}"></svg>
@@ -275,7 +275,7 @@
           </li>
           <li>
             <svg th:replace="~{fragments/iconos :: icono('map-pin', 'icon-sm')}"></svg>
-            <span>Envíos a todo Colombia</span>
+            <span>Cobertura en toda Colombia</span>
           </li>
         </ul>
       </div>

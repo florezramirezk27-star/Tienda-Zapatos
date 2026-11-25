@@ -47,8 +47,8 @@ public class DatosIniciales implements CommandLineRunner {
             usuarios.save(new Usuario("Vendedor", "vendedor@tienda.test", clave, "3000000003", Rol.VENDEDOR));
             usuarios.save(new Usuario("Almacenista", "almacenista@tienda.test", clave, "3000000004", Rol.ALMACENISTA));
             usuarios.save(new Usuario("Cliente de prueba", "cliente@tienda.test", clave, "3000000005", Rol.CLIENTE));
-            log.info("Usuarios de demostración creados (clave: {}): admin@, gerente@, vendedor@, almacenista@, cliente@tienda.test",
-                    CLAVE_DEMO);
+            // NFR-005: la clave demo nunca se escribe en los logs.
+            log.info("Usuarios de demostración creados: admin@, gerente@, vendedor@, almacenista@, cliente@tienda.test");
         }
         if (zapatos.count() == 0) {
             Object[][] datos = {

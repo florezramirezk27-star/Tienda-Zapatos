@@ -818,8 +818,8 @@ textarea.form-control { min-height: 100px; resize: vertical; }
   display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 7px;
 }
 .talla-chip {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 46px; padding: 0 6px;
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  min-height: 46px; padding: 3px 6px; line-height: 1.05;
   border: 1px solid var(--border-strong); border-radius: var(--radius-xs);
   background: var(--white); color: var(--text);
   font-family: var(--font-body); font-size: 0.86rem; font-weight: 600;
@@ -828,7 +828,12 @@ textarea.form-control { min-height: 100px; resize: vertical; }
 .talla-chip:hover:not(:disabled) { border-color: var(--navy); }
 .talla-chip.agotada, .talla-chip:disabled {
   color: var(--muted-soft); background: var(--surface-alt);
-  border-color: var(--border); text-decoration: line-through; cursor: not-allowed;
+  border-color: var(--border); cursor: not-allowed;
+}
+.talla-chip.agotada .talla-numero { text-decoration: line-through; }
+.talla-chip .talla-estado {
+  font-size: 0.5rem; font-weight: 700; line-height: 1; text-transform: uppercase;
+  letter-spacing: 0.02em; color: var(--danger); text-decoration: none;
 }
 .talla-chip.seleccionada {
   background: var(--navy); border-color: var(--navy); color: var(--white);

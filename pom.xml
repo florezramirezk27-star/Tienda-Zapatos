@@ -15,7 +15,7 @@
   <artifactId>tienda-zapatos</artifactId>
   <version>1.0.0</version>
   <name>tienda-zapatos</name>
-  <description>Tienda de Zapatos - aplicación web MVC con Spring Boot, Thymeleaf, JPA y MySQL</description>
+  <description>Tienda de Zapatos - aplicación web MVC con Spring Boot, Thymeleaf, JPA y PostgreSQL (ADR-006)</description>
 
   <properties>
     <java.version>21</java.version>
@@ -36,7 +36,7 @@
       <artifactId>thymeleaf-extras-springsecurity6</artifactId>
     </dependency>
 
-    <!-- JPA + PostgreSQL -->
+    <!-- JPA + PostgreSQL (base oficial según ADR-006; el DOCX pedía MySQL 8) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
